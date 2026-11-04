@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuildWell CRM - ტექნიკური ინსპექტირების რეესტრი</title>
+    <!-- HTML-ის PDF-ად გადასაყვანი ბიბლიოთეკა -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
+        body { background: #eef2f6; color: #1e293b; padding: 20px; }
+        .app-header { background: #1e3a8a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .app-header h1 { font-size: 20px; font-weight: 600; }
+
+        .main-layout { display: grid; grid-template-columns: 380px 1fr; gap: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .card-title { font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; }
+        .form-group textarea { height: 60px; resize: vertical; }
+
+        .btn { background: #2563eb; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 14px; margin-top: 5px; }
+        .btn:hover { background: #1d4ed8; }
+        .btn-success { background: #16a34a; }
+        .btn-success:hover { background: #15803d; }
+
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; }
+        .filter-bar input, .filter-bar select { padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+        .filter-bar input { flex: 1; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; color: #475569; font-weight: 600; }
+
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge-urgent { background: #fee2e2; color: #b91c1c; }
+        .badge-normal { background: #fef3c7; color: #b45309; }
+        .badge-low { background: #e0f2fe; color: #0369a1; }
+        .badge-overdue { background: #7f1d1d; color: #ffffff; }
+
+        .action-btn { padding: 5px 8px; border-radius: 4px; border: none; font-size: 11px; cursor: pointer; margin-right: 2px; }
+        .btn-print { background: #0284c7; color: white; }
+        .btn-wa { background: #25D366; color: white; }
+        .btn-delete { background: #dc2626; color: white; }
+
+        .badge-closed { background: #dcfce7; color: #15803d; }
+        .btn-close { background: #16a34a; color: white; }
+        .btn-reopen { background: #64748b; color: white; }
+        .header-right { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+        .logout-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+        body.viewer .main-layout { grid-template-columns: 1fr; }
+        body.viewer #formCard { display: none; }
+        #loginOverlay { position: fixed; inset: 0; background: #1e3a8a; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .login-box { background: white; padding: 30px; border-radius: 10px; width: 340px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .login-box h2 { font-size: 18px; color: #1e3a8a; margin-bottom: 5px; text-align: center; }
+        .login-box p { font-size: 12px; color: #64748b; text-align: center; margin-bottom: 18px; }
+        .login-error { color: #b91c1c; font-size: 12px; margin-bottom: 8px; display: none; }
+        .btn-guest { background: #e2e8f0; color: #334155; }
+        .btn-guest:hover { background: #cbd5e1; }
+        .img-preview { width: 100%; max-height: 120px; object-fit: cover; border-radius: 6px; margin-top: 8px; display: none; }
+
+        /* PDF გენერირების დიზაინი */
+        #pdfTemplate {
+            display: none;
+            width: 750px;
+            padding: 30px;
+            background: #ffffff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #1a1a1a;
+        }
+        .pdf-header { text-align: center; font-size: 18px; font-weight: bold; color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 10px; margin-bottom: 20px; }
+        .pdf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; background: #f8fafc; padding: 15px; border: 1px solid #cbd5e1; margin-bottom: 20px; border-radius: 4px; }
+        .pdf-title { font-size: 13px; font-weight: bold; color: #334155; margin-bottom: 5px; margin-top: 15px; }
+        .pdf-box { background: #f1f5f9; padding: 12px; border-left: 4px solid #2563eb; font-size: 13px; border-radius: 2px; line-height: 1.5; }
+        .pdf-photo { margin-top: 15px; text-align: center; }
+        .pdf-photo img { max-width: 100%; max-height: 400px; border: 1px solid #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<div id="loginOverlay">
+    <div class="login-box">
+        <h2>🏢 BuildWell CRM</h2>
+        <p>ტექნიკური ინსპექტირების რეესტრი</p>
+        <div class="login-error" id="loginError">⚠️ ლოგინი ან პაროლი არასწორია</div>
+        <div class="form-group">
+            <label>ლოგინი:</label>
+            <input type="text" id="loginInput" autocomplete="username">
+        </div>
+        <div class="form-group">
+            <label>პაროლი:</label>
+            <input type="password" id="passInput" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()">
+        </div>
+        <button class="btn" onclick="doLogin()">შესვლა</button>
+        <button class="btn btn-guest" onclick="enterGuest()">👁 მხოლოდ ნახვა (სტუმარი)</button>
+    </div>
+</div>
+
+<div class="app-header">
+    <h1>🏢 BuildWell CRM - ტექნიკური ინსპექტირების მართვა</h1>
+    <div class="header-right">
+        <span id="userInfo"></span>
+        <button class="logout-btn" onclick="logout()">გასვლა</button>
+    </div>
+</div>
+
+<div class="main-layout">
+    <!-- ფორმა -->
+    <div class="card" id="formCard">
+        <div class="card-title">+ ახალი თიქეთის შექმნა</div>
+        <form id="ticketForm">
+            <div class="form-group">
+                <label>ხარვეზის ID (უნიკალური):</label>
+                <input type="text" id="defectId" placeholder="მაგ: 1076181" required>
+            </div>
+            <div class="form-group">
+                <label>ობიექტის დასახელება:</label>
+                <input type="text" id="objectName" value="არქი დიღომი 3D" required>
+            </div>
+            <div class="form-group">
+                <label>სართული:</label>
+                <input type="text" id="floor" placeholder="მაგ: -1 ან 21,22,23">
+            </div>
+            <div class="form-group">
+                <label>დედლაინი:</label>
+                <input type="date" id="deadline" required>
+            </div>
+            <div class="form-group">
+                <label>პასუხისმგებელი პირი:</label>
+                <input type="text" id="assignee" placeholder="მაგ: მიშა / თენგიზი">
+            </div>
+            <div class="form-group">
+                <label>ხარისხის მენეჯერი:</label>
+                <input type="text" id="qualityManager" value="დავით ბარბაქაძე">
+            </div>
+            <div class="form-group">
+                <label>ხარვეზის ტიპი:</label>
+                <input type="text" id="defectType" placeholder="მაგ: ბეტონის დამცავი შრე">
+            </div>
+            <div class="form-group">
+                <label>პრობლემის აღწერილობა:</label>
+                <textarea id="problemDesc" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>რეკომენდაცია:</label>
+                <textarea id="recommendation"></textarea>
+            </div>
+            <div class="form-group">
+                <label>ფოტოს მიმაგრება:</label>
+                <input type="file" id="photoInput" accept="image/*" onchange="previewImage(this)">
+                <img id="imgPreview" class="img-preview">
+            </div>
+            <button type="submit" class="btn btn-success">💾 ბაზაში შენახვა & PDF გადმოწერა</button>
+        </form>
+    </div>
+
+    <!-- რეესტრი -->
+    <div class="card">
+        <div class="card-title">📋 შენახული თიქეთების ბაზა</div>
+        <div class="filter-bar">
+            <input type="text" id="searchInput" placeholder="🔍 ძებნა ID-ით, ობიექტით ან პასუხისმგებლით..." oninput="renderTable()">
+            <select id="statusFilter" onchange="renderTable()">
+                <option value="ALL">ყველა სტატუსი</option>
+                <option value="ვადაში">ვადაში</option>
+                <option value="ვადაგადაცილებული">ვადაგადაცილებული</option>
+                <option value="დახურული">დახურული</option>
+            </select>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ობიექტი / სართული</th>
+                    <th>პასუხისმგებელი</th>
+                    <th>დედლაინი</th>
+                    <th>სტატუსი</th>
+                    <th>მოქმედება</th>
+                </tr>
+            </thead>
+            <tbody id="ticketTable"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ფარული შაბლონი PDF-ის დასაგენერირებლად -->
+<div id="pdfTemplate">
+    <div class="pdf-header">მიმდინარე სამშენებლო-სამონტაჟო სამუშაოების შეფასება</div>
+    <div class="pdf-grid" id="pdfGrid"></div>
+    <div class="pdf-title">პრობლემის აღწერილობა:</div>
+    <div class="pdf-box" id="pdfDesc"></div>
+    <div class="pdf-title">რეკომენდაცია:</div>
+    <div class="pdf-box" id="pdfRec" style="border-left-color: #16a34a;"></div>
+    <div class="pdf-title">ფოტო მასალა:</div>
+    <div class="pdf-photo" id="pdfPhoto"></div>
+</div>
+
+<script>
+    let base64Image = "";
+
+    // ავტორიზებული მომხმარებლები (მხოლოდ მათ შეუძლიათ თიქეთის გახსნა/დახურვა/წაშლა)
+    const USERS = {
+        'g.michilashvili': 'Michila2026',
+        'g.bajelidze': 'Bajelidze2026',
+        'o.mghebrishvili': 'Mgebrishvili2026'
+    };
+    let currentUser = sessionStorage.getItem('archi_user'); // login, 'guest' ან null
+    let isEditor = false;
+
+    function doLogin() {
+        let login = document.getElementById('loginInput').value.trim().toLowerCase();
+        let pass = document.getElementById('passInput').value;
+        if (Object.prototype.hasOwnProperty.call(USERS, login) && USERS[login] === pass) {
+            currentUser = login;
+            sessionStorage.setItem('archi_user', login);
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('passInput').value = '';
+            applyAuth();
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    }
+
+    function enterGuest() {
+        currentUser = 'guest';
+        sessionStorage.setItem('archi_user', 'guest');
+        applyAuth();
+    }
+
+    function logout() {
+        sessionStorage.removeItem('archi_user');
+        currentUser = null;
+        document.getElementById('loginInput').value = '';
+        applyAuth();
+    }
+
+    function applyAuth() {
+        isEditor = !!currentUser && Object.prototype.hasOwnProperty.call(USERS, currentUser);
+        document.getElementById('loginOverlay').style.display = currentUser ? 'none' : 'flex';
+        document.body.classList.toggle('viewer', !isEditor);
+        document.getElementById('userInfo').innerText = !currentUser ? '' :
+            (isEditor ? '👤 ' + currentUser : '👁 სტუმარი (მხოლოდ ნახვა და გადმოწერა)');
+        renderTable();
+    }
+
+    function actionButtons(t, i) {
+        let pdf = `<button class="action-btn btn-print" onclick="downloadPdfIndex(${i})">📥 PDF</button>`;
+        if (!isEditor) return pdf;
+        let closeBtn = t.closed
+            ? `<button class="action-btn btn-reopen" onclick="toggleClose(${i})">↩ გახსნა</button>`
+            : `<button class="action-btn btn-close" onclick="toggleClose(${i})">✔ დახურვა</button>`;
+        return closeBtn +
+            `<button class="action-btn btn-wa" onclick="sendWhatsApp(${i})">📲 WA</button>` +
+            pdf +
+            `<button class="action-btn btn-delete" onclick="deleteTicket(${i})">🗑️</button>`;
+    }
+
+    function toggleClose(i) {
+        if (!isEditor) return;
+        let tickets = getTickets();
+        let t = tickets[i];
+        if (t.closed) {
+            t.closed = false; t.closedBy = ''; t.closedDate = '';
+        } else {
+            if (!confirm(`დავხუროთ თიქეთი #${t.id}?`)) return;
+            t.closed = true;
+            t.closedBy = currentUser;
+            t.closedDate = new Date().toISOString().split('T')[0];
+        }
+        saveTickets(tickets);
+        renderTable();
+    }
+
+    // ფოტოს არჩევისას ვამცირებთ ზომას (მაქს. 1200px), რომ localStorage-მა გაუძლოს და PDF მსუბუქი იყოს
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let img = new Image();
+                img.onload = function() {
+                    const MAX = 1200;
+                    let w = img.width, h = img.height;
+                    if (w > MAX || h > MAX) {
+                        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+                        else { w = Math.round(w * MAX / h); h = MAX; }
+                    }
+                    let canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    let ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, w, h);
+                    ctx.drawImage(img, 0, 0, w, h);
+                    base64Image = canvas.toDataURL('image/jpeg', 0.75);
+
+                    let preview = document.getElementById('imgPreview');
+                    preview.src = base64Image;
+                    preview.style.display = 'block';
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function getTickets() {
+        return JSON.parse(localStorage.getItem('archi_db_tickets') || '[]');
+    }
+
+    function saveTickets(data) {
+        try {
+            localStorage.setItem('archi_db_tickets', JSON.stringify(data));
+            return true;
+        } catch (err) {
+            alert('⚠️ ბაზაში შენახვა ვერ მოხერხდა (მეხსიერება გაივსო). წაშალეთ ძველი თიქეთები ან გამოიყენეთ უფრო მცირე ფოტო.');
+            return false;
+        }
+    }
+
+    document.getElementById('ticketForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!isEditor) return;
+
+        let defectIdInput = document.getElementById('defectId').value.trim();
+        let tickets = getTickets();
+
+        // უნიკალურობის შემოწმება
+        let exists = tickets.some(t => t.id.toLowerCase() === defectIdInput.toLowerCase());
+        if (exists) {
+            alert(`⚠️ შეცდომა: თიქეთი ID-ით #${defectIdInput} უკვე არსებობს ბაზაში! გთხოვთ მიუთითოთ განსხვავებული უნიკალური ID.`);
+            document.getElementById('defectId').focus();
+            return;
+        }
+
+        let ticket = {
+            id: defectIdInput,
+            objectName: document.getElementById('objectName').value,
+            floor: document.getElementById('floor').value,
+            deadline: document.getElementById('deadline').value,
+            assignee: document.getElementById('assignee').value,
+            qualityManager: document.getElementById('qualityManager').value,
+            defectType: document.getElementById('defectType').value,
+            problemDesc: document.getElementById('problemDesc').value,
+            recommendation: document.getElementById('recommendation').value,
+            date: new Date().toISOString().split('T')[0],
+            createdBy: currentUser,
+            closed: false,
+            closedBy: '',
+            closedDate: '',
+            photo: base64Image
+        };
+
+        tickets.push(ticket);
+        if (!saveTickets(tickets)) return;
+
+        // ავტომატურად PDF-ის გადმოწერა შენახვისას
+        downloadPDF(ticket);
+
+        this.reset();
+        base64Image = "";
+        document.getElementById('imgPreview').style.display = 'none';
+        renderTable();
+    });
+
+    async function downloadPDF(t) {
+        let effStatus = getEffectivePriority(t);
+
+        document.getElementById('pdfGrid').innerHTML = `
+            <div><b>დაფიქსირებული ხარვეზი:</b> #${t.id}</div>
+            <div><b>გახსნის თარიღი:</b> ${t.date}</div>
+            <div><b>ობიექტის დასახელება:</b> ${t.objectName}</div>
+            <div><b>დედლაინი:</b> ${t.deadline}</div>
+            <div><b>სართული:</b> ${t.floor || 'მითითებული არ არის'}</div>
+            <div><b>სტატუსი:</b> ${effStatus}</div>
+            <div><b>პასუხისმგებელი პირი:</b> ${t.assignee || '-'}</div>
+            <div><b>ხარისხის მენეჯერი:</b> ${t.qualityManager || t.supervisor || '-'}</div>
+            <div><b>ხარვეზის ტიპი:</b> ${t.defectType || t.groups || '-'}</div>
+            <div><b>თიქეთი გახსნა:</b> ${t.createdBy || '-'}</div>
+            ${t.closed ? `<div><b>დახურვის თარიღი:</b> ${t.closedDate || '-'}</div><div><b>დახურა:</b> ${t.closedBy || '-'}</div>` : ''}
+        `;
+        document.getElementById('pdfDesc').innerText = t.problemDesc || '-';
+        document.getElementById('pdfRec').innerText = t.recommendation || '-';
+
+        // ფოტოს ჩატვირთვას ველოდებით PDF-ის გენერაციამდე
+        let photoDiv = document.getElementById('pdfPhoto');
+        photoDiv.innerHTML = '';
+        if (t.photo) {
+            let img = new Image();
+            await new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+                img.src = t.photo;
+            });
+            photoDiv.appendChild(img);
+        } else {
+            photoDiv.innerHTML = '<i>ფოტო არ არის მიმაგრებული</i>';
+        }
+
+        let element = document.getElementById('pdfTemplate');
+        element.style.display = 'block';
+        window.scrollTo(0, 0);
+
+        let opt = {
+            margin:       10,
+            filename:     `Ticket_${t.id}_${t.objectName}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['avoid-all', 'css'] }
+        };
+
+        try {
+            await html2pdf().set(opt).from(element).save();
+        } finally {
+            element.style.display = 'none';
+        }
+    }
+
+    function getEffectivePriority(t) {
+        if (t.closed) return 'დახურული';
+        let today = new Date().toISOString().split('T')[0];
+        if (t.deadline && t.deadline < today) {
+            return 'ვადაგადაცილებული';
+        }
+        return 'ვადაში';
+    }
+
+    function getBadgeHTML(status) {
+        if (status === 'დახურული') return '<span class="badge badge-closed">დახურული</span>';
+        if (status === 'ვადაში') return '<span class="badge badge-low">ვადაში</span>';
+        if (status === 'ვადაგადაცილებული') return '<span class="badge badge-overdue">ვადაგადაცილებული</span>';
+        return status;
+    }
+
+    function renderTable() {
+        let search = document.getElementById('searchInput').value.toLowerCase();
+        let filter = document.getElementById('statusFilter').value;
+        let tickets = getTickets();
+        let tbody = document.getElementById('ticketTable');
+        tbody.innerHTML = '';
+
+        tickets.forEach((t, i) => {
+            let effStatus = getEffectivePriority(t);
+            let matchesSearch = t.id.toLowerCase().includes(search) || t.objectName.toLowerCase().includes(search) || (t.assignee && t.assignee.toLowerCase().includes(search));
+            let matchesFilter = (filter === 'ALL') || (effStatus === filter);
+
+            if (matchesSearch && matchesFilter) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>#${t.id}</b></td>
+                        <td>${t.objectName}<br><small style="color:#64748b;">სართული: ${t.floor||'-'}</small></td>
+                        <td>${t.assignee||'-'}</td>
+                        <td>${t.deadline}</td>
+                        <td>${getBadgeHTML(effStatus)}</td>
+                        <td>${actionButtons(t, i)}</td>
+                    </tr>
+                `;
+            }
+        });
+    }
+
+    function sendWhatsApp(i) {
+        if (!isEditor) return;
+        let t = getTickets()[i];
+        let text = `🚨 *ტექნიკური ინსპექტირების თიქეთი #${t.id}*\n\n` +
+                   `🏢 *ობიექტი:* ${t.objectName} (სართული: ${t.floor || '-'})\n` +
+                   `📅 *დედლაინი:* ${t.deadline}\n` +
+                   `⚠️ *სტატუსი:* ${getEffectivePriority(t)}\n` +
+                   `🔧 *ხარვეზის ტიპი:* ${t.defectType || t.groups || '-'}\n` +
+                   `👤 *პასუხისმგებელი:* ${t.assignee || '-'}\n` +
+                   `✅ *ხარისხის მენეჯერი:* ${t.qualityManager || t.supervisor || '-'}\n\n` +
+                   `📝 *პრობლემა:* ${t.problemDesc}\n\n` +
+                   `💡 *რეკომენდაცია:* ${t.recommendation || '-'}`;
+
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function downloadPdfIndex(i) {
+        let t = getTickets()[i];
+        downloadPDF(t);
+    }
+
+    function deleteTicket(i) {
+        if (!isEditor) return;
+        if (confirm('ნამდვილად გსურთ ამ თიქეთის წაშლა?')) {
+            let tickets = getTickets();
+            tickets.splice(i, 1);
+            saveTickets(tickets);
+            renderTable();
+        }
+    }
+
+    applyAuth();
+</script>
+
+</body>
+</html>
