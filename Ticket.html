@@ -77,6 +77,34 @@
         .pdf-box { background: #f1f5f9; padding: 12px; border-left: 4px solid #2563eb; font-size: 13px; border-radius: 2px; line-height: 1.5; }
         .pdf-photo { margin-top: 15px; text-align: center; }
         .pdf-photo img { max-width: 100%; max-height: 400px; border: 1px solid #cbd5e1; border-radius: 4px; }
+
+        /* ტელეფონის / პლანშეტის ადაპტაცია */
+        .login-box { max-width: 92vw; }
+        @media (max-width: 900px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 700px) {
+            body { padding: 10px; }
+            .app-header { flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 14px; }
+            .app-header h1 { font-size: 16px; }
+            .header-right { width: 100%; justify-content: space-between; flex-wrap: wrap; }
+            .card { padding: 14px; }
+            /* iOS-ზე ზუმის თავიდან ასაცილებლად */
+            .form-group input, .form-group select, .form-group textarea,
+            .filter-bar input, .filter-bar select, .login-box input { font-size: 16px; padding: 10px; }
+            .btn { padding: 13px; font-size: 15px; }
+            .filter-bar { flex-direction: column; }
+
+            /* ცხრილი -> ბარათები */
+            table, thead, tbody, tr, td { display: block; width: 100%; }
+            thead { display: none; }
+            tr { border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; background: #fff; }
+            td { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; border: none; padding: 6px 0; text-align: right; }
+            td::before { content: attr(data-label); font-weight: 600; color: #475569; text-align: left; flex-shrink: 0; }
+            td[data-label="მოქმედება"] { flex-wrap: wrap; justify-content: flex-start; gap: 6px; padding-top: 10px; border-top: 1px solid #e2e8f0; margin-top: 4px; }
+            td[data-label="მოქმედება"]::before { display: none; }
+            .action-btn { padding: 10px 12px; font-size: 13px; margin: 0; }
+        }
     </style>
 </head>
 <body>
@@ -449,12 +477,12 @@
             if (matchesSearch && matchesFilter) {
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>#${t.id}</b></td>
-                        <td>${t.objectName}<br><small style="color:#64748b;">სართული: ${t.floor||'-'}</small></td>
-                        <td>${t.assignee||'-'}</td>
-                        <td>${t.deadline}</td>
-                        <td>${getBadgeHTML(effStatus)}</td>
-                        <td>${actionButtons(t, i)}</td>
+                        <td data-label="ID"><b>#${t.id}</b></td>
+                        <td data-label="ობიექტი / სართული"><span>${t.objectName}<br><small style="color:#64748b;">სართული: ${t.floor||'-'}</small></span></td>
+                        <td data-label="პასუხისმგებელი">${t.assignee||'-'}</td>
+                        <td data-label="დედლაინი">${t.deadline}</td>
+                        <td data-label="სტატუსი">${getBadgeHTML(effStatus)}</td>
+                        <td data-label="მოქმედება">${actionButtons(t, i)}</td>
                     </tr>
                 `;
             }
