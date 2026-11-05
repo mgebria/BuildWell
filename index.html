@@ -6,6 +6,9 @@
     <title>BuildWell CRM - ტექნიკური ინსპექტირების რეესტრი</title>
     <!-- HTML-ის PDF-ად გადასაყვანი ბიბლიოთეკა -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Firebase (Firestore) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
         body { background: #eef2f6; color: #1e293b; padding: 20px; }
@@ -142,11 +145,11 @@
         <form id="ticketForm">
             <div class="form-group">
                 <label>ხარვეზის ID (უნიკალური):</label>
-                <input type="text" id="defectId" placeholder="მაგ: 001" required>
+                <input type="text" id="defectId" placeholder="მაგ: 1076181" required>
             </div>
             <div class="form-group">
                 <label>ობიექტის დასახელება:</label>
-                <input type="text" id="objectName" value="არქი დიღომი 3C/D" required>
+                <input type="text" id="objectName" value="არქი დიღომი 3D" required>
             </div>
             <div class="form-group">
                 <label>სართული:</label>
@@ -158,11 +161,11 @@
             </div>
             <div class="form-group">
                 <label>პასუხისმგებელი პირი:</label>
-                <input type="text" id="assignee" placeholder="მაგ: სახელი გვარი">
+                <input type="text" id="assignee" placeholder="მაგ: მიშა / თენგიზი">
             </div>
             <div class="form-group">
                 <label>ხარისხის მენეჯერი:</label>
-                <input type="text" id="qualityManager" value="სახელი გვარი">
+                <input type="text" id="qualityManager" value="დავით ბარბაქაძე">
             </div>
             <div class="form-group">
                 <label>ხარვეზის ტიპი:</label>
@@ -188,6 +191,7 @@
     <!-- რეესტრი -->
     <div class="card">
         <div class="card-title">📋 შენახული თიქეთების ბაზა</div>
+        <div id="migrateBox" style="display:none; background:#fef3c7; color:#92400e; padding:10px; border-radius:6px; margin-bottom:12px; font-size:13px;"></div>
         <div class="filter-bar">
             <input type="text" id="searchInput" placeholder="🔍 ძებნა ID-ით, ობიექტით ან პასუხისმგებლით..." oninput="renderTable()">
             <select id="statusFilter" onchange="renderTable()">
@@ -285,30 +289,32 @@
             `<button class="action-btn btn-delete" onclick="deleteTicket(${i})">🗑️</button>`;
     }
 
-    function toggleClose(i) {
+    async function toggleClose(i) {
         if (!isEditor) return;
-        let tickets = getTickets();
-        let t = tickets[i];
+        let t = getTickets()[i];
+        if (!t) return;
+        let update;
         if (t.closed) {
-            t.closed = false; t.closedBy = ''; t.closedDate = '';
+            update = { closed: false, closedBy: '', closedDate: '' };
         } else {
             if (!confirm(`დავხუროთ თიქეთი #${t.id}?`)) return;
-            t.closed = true;
-            t.closedBy = currentUser;
-            t.closedDate = new Date().toISOString().split('T')[0];
+            update = { closed: true, closedBy: currentUser, closedDate: new Date().toISOString().split('T')[0] };
         }
-        saveTickets(tickets);
-        renderTable();
+        try {
+            await db.collection('tickets').doc(docIdOf(t.id)).update(update);
+        } catch (err) {
+            alert('⚠️ სტატუსის შეცვლა ვერ მოხერხდა: ' + (err.message || err));
+        }
     }
 
-    // ფოტოს არჩევისას ვამცირებთ ზომას (მაქს. 1200px), რომ localStorage-მა გაუძლოს და PDF მსუბუქი იყოს
+    // ფოტოს არჩევისას ვამცირებთ ზომას, რომ ბაზაში ჩაეტიოს და PDF მსუბუქი იყოს
     function previewImage(input) {
         if (input.files && input.files[0]) {
             let reader = new FileReader();
             reader.onload = function(e) {
                 let img = new Image();
                 img.onload = function() {
-                    const MAX = 1200;
+                    const MAX = 1000;
                     let w = img.width, h = img.height;
                     if (w > MAX || h > MAX) {
                         if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
@@ -321,7 +327,9 @@
                     ctx.fillStyle = '#ffffff';
                     ctx.fillRect(0, 0, w, h);
                     ctx.drawImage(img, 0, 0, w, h);
-                    base64Image = canvas.toDataURL('image/jpeg', 0.75);
+                    let q = 0.7;
+                    base64Image = canvas.toDataURL('image/jpeg', q);
+                    while (base64Image.length > 700000 && q > 0.3) { q -= 0.1; base64Image = canvas.toDataURL('image/jpeg', q); }
 
                     let preview = document.getElementById('imgPreview');
                     preview.src = base64Image;
@@ -333,21 +341,79 @@
         }
     }
 
-    function getTickets() {
-        return JSON.parse(localStorage.getItem('archi_db_tickets') || '[]');
+    // ===== Firebase / Firestore =====
+    const firebaseConfig = {
+        apiKey: "AIzaSyBmH8ndlRNfVJxz2TQ80BxJS_N3yx6E-rI",
+        authDomain: "buildwell-2108b.firebaseapp.com",
+        projectId: "buildwell-2108b",
+        storageBucket: "buildwell-2108b.firebasestorage.app",
+        messagingSenderId: "534112383097",
+        appId: "1:534112383097:web:2a90740849b116dddf64a8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let ticketsCache = [];
+    let dbLoaded = false;
+    let dbError = '';
+
+    function docIdOf(id) { return encodeURIComponent(id); }
+
+    function getTickets() { return ticketsCache; }
+
+    function startListener() {
+        db.collection('tickets').onSnapshot(snap => {
+            ticketsCache = snap.docs.map(d => d.data());
+            ticketsCache.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            dbLoaded = true;
+            dbError = '';
+            renderTable();
+        }, err => {
+            dbError = err.message || String(err);
+            renderTable();
+        });
     }
 
-    function saveTickets(data) {
-        try {
-            localStorage.setItem('archi_db_tickets', JSON.stringify(data));
-            return true;
-        } catch (err) {
-            alert('⚠️ ბაზაში შენახვა ვერ მოხერხდა (მეხსიერება გაივსო). წაშალეთ ძველი თიქეთები ან გამოიყენეთ უფრო მცირე ფოტო.');
-            return false;
+    // ძველი (ლოკალური) თიქეთების გადატანა საერთო ბაზაში
+    function getLocalTickets() {
+        try { return JSON.parse(localStorage.getItem('archi_db_tickets') || '[]'); }
+        catch (e) { return []; }
+    }
+
+    function updateMigrateBox() {
+        let box = document.getElementById('migrateBox');
+        let n = getLocalTickets().length;
+        if (isEditor && dbLoaded && n > 0) {
+            box.style.display = 'block';
+            box.innerHTML = `📦 ამ მოწყობილობაზე ${n} ძველი თიქეთია შენახული. <button class="action-btn btn-close" onclick="migrateLocal()">⬆ ატვირთვა საერთო ბაზაში</button>`;
+        } else {
+            box.style.display = 'none';
         }
     }
 
-    document.getElementById('ticketForm').addEventListener('submit', function(e) {
+    async function migrateLocal() {
+        if (!isEditor) return;
+        let local = getLocalTickets();
+        let added = 0, skipped = 0;
+        try {
+            for (let k = 0; k < local.length; k++) {
+                let t = JSON.parse(JSON.stringify(local[k]));
+                let ref = db.collection('tickets').doc(docIdOf(t.id));
+                let snap = await ref.get();
+                if (snap.exists) { skipped++; continue; }
+                t.createdAt = t.createdAt || (Date.now() - (local.length - k) * 1000);
+                await ref.set(t);
+                added++;
+            }
+            localStorage.removeItem('archi_db_tickets');
+            alert(`✅ ატვირთულია: ${added}. გამოტოვებულია (უკვე არსებობს): ${skipped}.`);
+        } catch (err) {
+            alert('⚠️ ატვირთვა ვერ მოხერხდა: ' + (err.message || err));
+        }
+        renderTable();
+    }
+
+    document.getElementById('ticketForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         if (!isEditor) return;
 
@@ -374,14 +440,25 @@
             recommendation: document.getElementById('recommendation').value,
             date: new Date().toISOString().split('T')[0],
             createdBy: currentUser,
+            createdAt: Date.now(),
             closed: false,
             closedBy: '',
             closedDate: '',
             photo: base64Image
         };
 
-        tickets.push(ticket);
-        if (!saveTickets(tickets)) return;
+        try {
+            let ref = db.collection('tickets').doc(docIdOf(ticket.id));
+            let snap = await ref.get();
+            if (snap.exists) {
+                alert(`⚠️ შეცდომა: თიქეთი ID-ით #${ticket.id} უკვე არსებობს ბაზაში!`);
+                return;
+            }
+            await ref.set(ticket);
+        } catch (err) {
+            alert('⚠️ ბაზაში შენახვა ვერ მოხერხდა: ' + (err.message || err));
+            return;
+        }
 
         // ავტომატურად PDF-ის გადმოწერა შენახვისას
         downloadPDF(ticket);
@@ -469,6 +546,19 @@
         let tbody = document.getElementById('ticketTable');
         tbody.innerHTML = '';
 
+        if (dbError) {
+            tbody.innerHTML = `<tr><td colspan="6" style="color:#b91c1c;">⚠️ ბაზასთან დაკავშირება ვერ მოხერხდა: ${dbError}</td></tr>`;
+            return;
+        }
+        if (!dbLoaded) {
+            tbody.innerHTML = '<tr><td colspan="6">⏳ იტვირთება...</td></tr>';
+            return;
+        }
+        if (tickets.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6">თიქეთები ჯერ არ არის.</td></tr>';
+        }
+        updateMigrateBox();
+
         tickets.forEach((t, i) => {
             let effStatus = getEffectivePriority(t);
             let matchesSearch = t.id.toLowerCase().includes(search) || t.objectName.toLowerCase().includes(search) || (t.assignee && t.assignee.toLowerCase().includes(search));
@@ -510,17 +600,21 @@
         downloadPDF(t);
     }
 
-    function deleteTicket(i) {
+    async function deleteTicket(i) {
         if (!isEditor) return;
+        let t = getTickets()[i];
+        if (!t) return;
         if (confirm('ნამდვილად გსურთ ამ თიქეთის წაშლა?')) {
-            let tickets = getTickets();
-            tickets.splice(i, 1);
-            saveTickets(tickets);
-            renderTable();
+            try {
+                await db.collection('tickets').doc(docIdOf(t.id)).delete();
+            } catch (err) {
+                alert('⚠️ წაშლა ვერ მოხერხდა: ' + (err.message || err));
+            }
         }
     }
 
     applyAuth();
+    startListener();
 </script>
 
 </body>
