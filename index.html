@@ -22,10 +22,12 @@
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; }
+        .form-group input:disabled { background: #f1f5f9; color: #64748b; }
         .form-group textarea { height: 60px; resize: vertical; }
 
         .btn { background: #2563eb; color: white; border: none; padding: 10px 15px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 14px; margin-top: 5px; }
         .btn:hover { background: #1d4ed8; }
+        .btn:disabled { opacity: 0.6; cursor: wait; }
         .btn-success { background: #16a34a; }
         .btn-success:hover { background: #15803d; }
 
@@ -38,19 +40,17 @@
         th { background: #f8fafc; color: #475569; font-weight: 600; }
 
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .badge-urgent { background: #fee2e2; color: #b91c1c; }
-        .badge-normal { background: #fef3c7; color: #b45309; }
         .badge-low { background: #e0f2fe; color: #0369a1; }
         .badge-overdue { background: #7f1d1d; color: #ffffff; }
+        .badge-closed { background: #dcfce7; color: #15803d; }
 
         .action-btn { padding: 5px 8px; border-radius: 4px; border: none; font-size: 11px; cursor: pointer; margin-right: 2px; }
         .btn-print { background: #0284c7; color: white; }
         .btn-wa { background: #25D366; color: white; }
         .btn-delete { background: #dc2626; color: white; }
-
-        .badge-closed { background: #dcfce7; color: #15803d; }
         .btn-close { background: #16a34a; color: white; }
         .btn-reopen { background: #64748b; color: white; }
+
         .header-right { display: flex; align-items: center; gap: 12px; font-size: 13px; }
         .logout-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .logout-btn:hover { background: rgba(255,255,255,0.3); }
@@ -63,7 +63,14 @@
         .login-error { color: #b91c1c; font-size: 12px; margin-bottom: 8px; display: none; }
         .btn-guest { background: #e2e8f0; color: #334155; }
         .btn-guest:hover { background: #cbd5e1; }
-        .img-preview { width: 100%; max-height: 120px; object-fit: cover; border-radius: 6px; margin-top: 8px; display: none; }
+
+        /* ფოტოების გადახედვა ფორმაში */
+        .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+        .thumb { position: relative; }
+        .thumb img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; display: block; }
+        .thumb button { position: absolute; top: 3px; right: 3px; background: #dc2626; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 13px; cursor: pointer; line-height: 22px; padding: 0; }
+        .photo-count { font-size: 11px; color: #64748b; margin-top: 4px; }
+        .form-msg { background: #dcfce7; color: #15803d; padding: 8px 10px; border-radius: 6px; font-size: 12px; margin-top: 8px; display: none; }
 
         /* PDF გენერირების დიზაინი */
         #pdfTemplate {
@@ -78,8 +85,9 @@
         .pdf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; background: #f8fafc; padding: 15px; border: 1px solid #cbd5e1; margin-bottom: 20px; border-radius: 4px; }
         .pdf-title { font-size: 13px; font-weight: bold; color: #334155; margin-bottom: 5px; margin-top: 15px; }
         .pdf-box { background: #f1f5f9; padding: 12px; border-left: 4px solid #2563eb; font-size: 13px; border-radius: 2px; line-height: 1.5; }
-        .pdf-photo { margin-top: 15px; text-align: center; }
-        .pdf-photo img { max-width: 100%; max-height: 400px; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .pdf-photo { margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; }
+        .pdf-photo .ph { page-break-inside: avoid; }
+        .pdf-photo img { max-width: 100%; max-height: 260px; border: 1px solid #cbd5e1; border-radius: 4px; }
 
         /* ტელეფონის / პლანშეტის ადაპტაცია */
         .login-box { max-width: 92vw; }
@@ -144,12 +152,18 @@
         <div class="card-title">+ ახალი თიქეთის შექმნა</div>
         <form id="ticketForm">
             <div class="form-group">
-                <label>ხარვეზის ID (უნიკალური):</label>
-                <input type="text" id="defectId" placeholder="მაგ: 1076181" required>
+                <label>ხარვეზის ID:</label>
+                <input type="text" value="ავტომატურად მიენიჭება შენახვისას" disabled>
             </div>
             <div class="form-group">
                 <label>ობიექტის დასახელება:</label>
-                <input type="text" id="objectName" value="არქი დიღომი 3D" required>
+                <select id="objectName" required>
+                    <option value="" disabled selected>აირჩიეთ ობიექტი...</option>
+                    <option value="არქი დიღომი 3 C/D">არქი დიღომი 3 C/D</option>
+                    <option value="არქი გურამიშვილი">არქი გურამიშვილი</option>
+                    <option value="არქი უნივერსი">არქი უნივერსი</option>
+                    <option value="არქი ჰორაიზონი">არქი ჰორაიზონი</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>სართული:</label>
@@ -180,11 +194,13 @@
                 <textarea id="recommendation"></textarea>
             </div>
             <div class="form-group">
-                <label>ფოტოს მიმაგრება:</label>
-                <input type="file" id="photoInput" accept="image/*" onchange="previewImage(this)">
-                <img id="imgPreview" class="img-preview">
+                <label>ფოტოების მიმაგრება (მაქს. 10):</label>
+                <input type="file" id="photoInput" accept="image/*" multiple onchange="addPhotos(this)">
+                <div class="photo-grid" id="photoPreview"></div>
+                <div class="photo-count" id="photoCount"></div>
             </div>
             <button type="submit" class="btn btn-success">💾 ბაზაში შენახვა & PDF გადმოწერა</button>
+            <div class="form-msg" id="formMsg"></div>
         </form>
     </div>
 
@@ -230,8 +246,7 @@
 </div>
 
 <script>
-    let base64Image = "";
-
+    // ===== ავტორიზაცია =====
     // ავტორიზებული მომხმარებლები (მხოლოდ მათ შეუძლიათ თიქეთის გახსნა/დახურვა/წაშლა)
     const USERS = {
         'g.michilashvili': 'Michilashvili2026',
@@ -277,70 +292,6 @@
         renderTable();
     }
 
-    function actionButtons(t, i) {
-        let pdf = `<button class="action-btn btn-print" onclick="downloadPdfIndex(${i})">📥 PDF</button>`;
-        if (!isEditor) return pdf;
-        let closeBtn = t.closed
-            ? `<button class="action-btn btn-reopen" onclick="toggleClose(${i})">↩ გახსნა</button>`
-            : `<button class="action-btn btn-close" onclick="toggleClose(${i})">✔ დახურვა</button>`;
-        return closeBtn +
-            `<button class="action-btn btn-wa" onclick="sendWhatsApp(${i})">📲 WA</button>` +
-            pdf +
-            `<button class="action-btn btn-delete" onclick="deleteTicket(${i})">🗑️</button>`;
-    }
-
-    async function toggleClose(i) {
-        if (!isEditor) return;
-        let t = getTickets()[i];
-        if (!t) return;
-        let update;
-        if (t.closed) {
-            update = { closed: false, closedBy: '', closedDate: '' };
-        } else {
-            if (!confirm(`დავხუროთ თიქეთი #${t.id}?`)) return;
-            update = { closed: true, closedBy: currentUser, closedDate: new Date().toISOString().split('T')[0] };
-        }
-        try {
-            await db.collection('tickets').doc(docIdOf(t.id)).update(update);
-        } catch (err) {
-            alert('⚠️ სტატუსის შეცვლა ვერ მოხერხდა: ' + (err.message || err));
-        }
-    }
-
-    // ფოტოს არჩევისას ვამცირებთ ზომას, რომ ბაზაში ჩაეტიოს და PDF მსუბუქი იყოს
-    function previewImage(input) {
-        if (input.files && input.files[0]) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let img = new Image();
-                img.onload = function() {
-                    const MAX = 1000;
-                    let w = img.width, h = img.height;
-                    if (w > MAX || h > MAX) {
-                        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
-                        else { w = Math.round(w * MAX / h); h = MAX; }
-                    }
-                    let canvas = document.createElement('canvas');
-                    canvas.width = w;
-                    canvas.height = h;
-                    let ctx = canvas.getContext('2d');
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, w, h);
-                    ctx.drawImage(img, 0, 0, w, h);
-                    let q = 0.7;
-                    base64Image = canvas.toDataURL('image/jpeg', q);
-                    while (base64Image.length > 700000 && q > 0.3) { q -= 0.1; base64Image = canvas.toDataURL('image/jpeg', q); }
-
-                    let preview = document.getElementById('imgPreview');
-                    preview.src = base64Image;
-                    preview.style.display = 'block';
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
     // ===== Firebase / Firestore =====
     const firebaseConfig = {
         apiKey: "AIzaSyBmH8ndlRNfVJxz2TQ80BxJS_N3yx6E-rI",
@@ -352,6 +303,9 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+
+    const ID_PREFIX = 'BW-';   // ავტომატური ID-ის პრეფიქსი (მაგ: BW-00001)
+    const MAX_PHOTOS = 10;
 
     let ticketsCache = [];
     let dbLoaded = false;
@@ -374,7 +328,112 @@
         });
     }
 
-    // ძველი (ლოკალური) თიქეთების გადატანა საერთო ბაზაში
+    // უნიკალური ID-ის ავტომატური მინიჭება (მრიცხველი ტრანზაქციით — ორი ადამიანი ერთსა და იმავე ნომერს ვერასდროს მიიღებს)
+    async function createTicket(base, photoCount) {
+        let counterRef = db.collection('meta').doc('counter');
+        return db.runTransaction(async tx => {
+            let snap = await tx.get(counterRef);
+            let n = (snap.exists ? (snap.data().value || 0) : 0) + 1;
+            let id = ID_PREFIX + String(n).padStart(5, '0');
+            let ref = db.collection('tickets').doc(docIdOf(id));
+            tx.set(counterRef, { value: n });
+            tx.set(ref, Object.assign({}, base, { id: id, photoCount: photoCount }));
+            return id;
+        });
+    }
+
+    // ფოტოები ინახება ცალკე კოლექციაში (ერთი ფოტო = ერთი ჩანაწერი)
+    async function savePhotos(ticketId, list) {
+        if (!list.length) return;
+        let batch = db.batch();
+        list.forEach((data, idx) => {
+            let ref = db.collection('photos').doc(docIdOf(ticketId) + '_' + idx);
+            batch.set(ref, { ticketId: ticketId, order: idx, data: data });
+        });
+        await batch.commit();
+    }
+
+    async function fetchPhotos(t) {
+        let list = [];
+        if ((t.photoCount || 0) > 0) {
+            let snap = await db.collection('photos').where('ticketId', '==', t.id).get();
+            list = snap.docs.map(d => d.data()).sort((a, b) => a.order - b.order).map(p => p.data);
+        }
+        if (!list.length && t.photo) list = [t.photo]; // ძველი ტიპის (ერთფოტოიანი) თიქეთები
+        return list;
+    }
+
+    // ===== ფოტოების არჩევა (მაქს. 10) =====
+    let photos = [];
+
+    function compressFile(file) {
+        return new Promise((resolve, reject) => {
+            let reader = new FileReader();
+            reader.onerror = reject;
+            reader.onload = function(e) {
+                let img = new Image();
+                img.onerror = reject;
+                img.onload = function() {
+                    const MAX = 1000;
+                    let w = img.width, h = img.height;
+                    if (w > MAX || h > MAX) {
+                        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+                        else { w = Math.round(w * MAX / h); h = MAX; }
+                    }
+                    let canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    let ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, w, h);
+                    ctx.drawImage(img, 0, 0, w, h);
+                    let q = 0.7;
+                    let data = canvas.toDataURL('image/jpeg', q);
+                    while (data.length > 300000 && q > 0.4) { q -= 0.1; data = canvas.toDataURL('image/jpeg', q); }
+                    resolve(data);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function addPhotos(input) {
+        let files = Array.from(input.files || []);
+        let free = MAX_PHOTOS - photos.length;
+        if (files.length && free <= 0) {
+            alert(`⚠️ მაქსიმუმ ${MAX_PHOTOS} ფოტოა დაშვებული.`);
+        } else if (files.length > free) {
+            alert(`⚠️ მაქსიმუმ ${MAX_PHOTOS} ფოტოა დაშვებული. დაემატება პირველი ${free}.`);
+            files = files.slice(0, free);
+        }
+        for (let f of files) {
+            try { photos.push(await compressFile(f)); } catch (e) { /* გამოტოვება */ }
+        }
+        input.value = '';
+        renderPhotoPreview();
+    }
+
+    function removePhoto(i) {
+        photos.splice(i, 1);
+        renderPhotoPreview();
+    }
+
+    function renderPhotoPreview() {
+        document.getElementById('photoPreview').innerHTML = photos.map((src, i) =>
+            `<div class="thumb"><img src="${src}"><button type="button" onclick="removePhoto(${i})">×</button></div>`
+        ).join('');
+        document.getElementById('photoCount').innerText = photos.length ? `📷 ${photos.length} / ${MAX_PHOTOS}` : '';
+    }
+
+    function showFormMsg(text) {
+        let el = document.getElementById('formMsg');
+        el.innerText = text;
+        el.style.display = 'block';
+        setTimeout(() => { el.style.display = 'none'; }, 8000);
+    }
+
+    // ===== ძველი (ლოკალური) თიქეთების გადატანა საერთო ბაზაში =====
     function getLocalTickets() {
         try { return JSON.parse(localStorage.getItem('archi_db_tickets') || '[]'); }
         catch (e) { return []; }
@@ -413,116 +472,135 @@
         renderTable();
     }
 
+    // ===== ახალი თიქეთის შენახვა =====
     document.getElementById('ticketForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         if (!isEditor) return;
 
-        let defectIdInput = document.getElementById('defectId').value.trim();
-        let tickets = getTickets();
-
-        // უნიკალურობის შემოწმება
-        let exists = tickets.some(t => t.id.toLowerCase() === defectIdInput.toLowerCase());
-        if (exists) {
-            alert(`⚠️ შეცდომა: თიქეთი ID-ით #${defectIdInput} უკვე არსებობს ბაზაში! გთხოვთ მიუთითოთ განსხვავებული უნიკალური ID.`);
-            document.getElementById('defectId').focus();
-            return;
-        }
-
-        let ticket = {
-            id: defectIdInput,
-            objectName: document.getElementById('objectName').value,
-            floor: document.getElementById('floor').value,
-            deadline: document.getElementById('deadline').value,
-            assignee: document.getElementById('assignee').value,
-            qualityManager: document.getElementById('qualityManager').value,
-            defectType: document.getElementById('defectType').value,
-            problemDesc: document.getElementById('problemDesc').value,
-            recommendation: document.getElementById('recommendation').value,
-            date: new Date().toISOString().split('T')[0],
-            createdBy: currentUser,
-            createdAt: Date.now(),
-            closed: false,
-            closedBy: '',
-            closedDate: '',
-            photo: base64Image
-        };
+        let form = this;
+        let btn = form.querySelector('button[type="submit"]');
+        let oldText = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = '⏳ ინახება...';
+        let photoList = photos.slice();
 
         try {
-            let ref = db.collection('tickets').doc(docIdOf(ticket.id));
-            let snap = await ref.get();
-            if (snap.exists) {
-                alert(`⚠️ შეცდომა: თიქეთი ID-ით #${ticket.id} უკვე არსებობს ბაზაში!`);
+            let base = {
+                objectName: document.getElementById('objectName').value,
+                floor: document.getElementById('floor').value,
+                deadline: document.getElementById('deadline').value,
+                assignee: document.getElementById('assignee').value,
+                qualityManager: document.getElementById('qualityManager').value,
+                defectType: document.getElementById('defectType').value,
+                problemDesc: document.getElementById('problemDesc').value,
+                recommendation: document.getElementById('recommendation').value,
+                date: new Date().toISOString().split('T')[0],
+                createdBy: currentUser,
+                createdAt: Date.now(),
+                closed: false,
+                closedBy: '',
+                closedDate: ''
+            };
+
+            let newId;
+            try {
+                newId = await createTicket(base, photoList.length);
+            } catch (err) {
+                alert('⚠️ ბაზაში შენახვა ვერ მოხერხდა: ' + (err.message || err));
                 return;
             }
-            await ref.set(ticket);
-        } catch (err) {
-            alert('⚠️ ბაზაში შენახვა ვერ მოხერხდა: ' + (err.message || err));
-            return;
+
+            let ticket = Object.assign({ id: newId, photoCount: photoList.length }, base);
+
+            try {
+                await savePhotos(newId, photoList);
+            } catch (err) {
+                alert('⚠️ თიქეთი შეიქმნა, მაგრამ ფოტოების შენახვა ვერ მოხერხდა: ' + (err.message || err));
+            }
+
+            showFormMsg(`✅ თიქეთი #${newId} შეიქმნა`);
+
+            // ავტომატურად PDF-ის გადმოწერა შენახვისას
+            downloadPDF(ticket, photoList);
+
+            form.reset();
+            photos = [];
+            renderPhotoPreview();
+        } finally {
+            btn.disabled = false;
+            btn.innerText = oldText;
         }
-
-        // ავტომატურად PDF-ის გადმოწერა შენახვისას
-        downloadPDF(ticket);
-
-        this.reset();
-        base64Image = "";
-        document.getElementById('imgPreview').style.display = 'none';
-        renderTable();
     });
 
-    async function downloadPDF(t) {
-        let effStatus = getEffectivePriority(t);
-
-        document.getElementById('pdfGrid').innerHTML = `
-            <div><b>დაფიქსირებული ხარვეზი:</b> #${t.id}</div>
-            <div><b>გახსნის თარიღი:</b> ${t.date}</div>
-            <div><b>ობიექტის დასახელება:</b> ${t.objectName}</div>
-            <div><b>დედლაინი:</b> ${t.deadline}</div>
-            <div><b>სართული:</b> ${t.floor || 'მითითებული არ არის'}</div>
-            <div><b>სტატუსი:</b> ${effStatus}</div>
-            <div><b>პასუხისმგებელი პირი:</b> ${t.assignee || '-'}</div>
-            <div><b>ხარისხის მენეჯერი:</b> ${t.qualityManager || t.supervisor || '-'}</div>
-            <div><b>ხარვეზის ტიპი:</b> ${t.defectType || t.groups || '-'}</div>
-            <div><b>თიქეთი გახსნა:</b> ${t.createdBy || '-'}</div>
-            ${t.closed ? `<div><b>დახურვის თარიღი:</b> ${t.closedDate || '-'}</div><div><b>დახურა:</b> ${t.closedBy || '-'}</div>` : ''}
-        `;
-        document.getElementById('pdfDesc').innerText = t.problemDesc || '-';
-        document.getElementById('pdfRec').innerText = t.recommendation || '-';
-
-        // ფოტოს ჩატვირთვას ველოდებით PDF-ის გენერაციამდე
-        let photoDiv = document.getElementById('pdfPhoto');
-        photoDiv.innerHTML = '';
-        if (t.photo) {
-            let img = new Image();
-            await new Promise(resolve => {
-                img.onload = resolve;
-                img.onerror = resolve;
-                img.src = t.photo;
-            });
-            photoDiv.appendChild(img);
-        } else {
-            photoDiv.innerHTML = '<i>ფოტო არ არის მიმაგრებული</i>';
-        }
-
+    // ===== PDF =====
+    async function downloadPDF(t, photoList) {
+        document.body.style.cursor = 'wait';
         let element = document.getElementById('pdfTemplate');
-        element.style.display = 'block';
-        window.scrollTo(0, 0);
-
-        let opt = {
-            margin:       10,
-            filename:     `Ticket_${t.id}_${t.objectName}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak:    { mode: ['avoid-all', 'css'] }
-        };
-
         try {
+            if (!photoList) photoList = await fetchPhotos(t);
+            let effStatus = getEffectivePriority(t);
+
+            document.getElementById('pdfGrid').innerHTML = `
+                <div><b>დაფიქსირებული ხარვეზი:</b> #${t.id}</div>
+                <div><b>გახსნის თარიღი:</b> ${t.date}</div>
+                <div><b>ობიექტის დასახელება:</b> ${t.objectName}</div>
+                <div><b>დედლაინი:</b> ${t.deadline}</div>
+                <div><b>სართული:</b> ${t.floor || 'მითითებული არ არის'}</div>
+                <div><b>სტატუსი:</b> ${effStatus}</div>
+                <div><b>პასუხისმგებელი პირი:</b> ${t.assignee || '-'}</div>
+                <div><b>ხარისხის მენეჯერი:</b> ${t.qualityManager || t.supervisor || '-'}</div>
+                <div><b>ხარვეზის ტიპი:</b> ${t.defectType || t.groups || '-'}</div>
+                <div><b>თიქეთი გახსნა:</b> ${t.createdBy || '-'}</div>
+                ${t.closed ? `<div><b>დახურვის თარიღი:</b> ${t.closedDate || '-'}</div><div><b>დახურა:</b> ${t.closedBy || '-'}</div>` : ''}
+            `;
+            document.getElementById('pdfDesc').innerText = t.problemDesc || '-';
+            document.getElementById('pdfRec').innerText = t.recommendation || '-';
+
+            // ყველა ფოტოს ჩატვირთვას ველოდებით PDF-ის გენერაციამდე
+            let photoDiv = document.getElementById('pdfPhoto');
+            photoDiv.innerHTML = '';
+            if (photoList.length) {
+                photoDiv.style.gridTemplateColumns = photoList.length === 1 ? '1fr' : '1fr 1fr';
+                let imgs = await Promise.all(photoList.map(src => new Promise(resolve => {
+                    let img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = () => resolve(img);
+                    img.src = src;
+                })));
+                imgs.forEach(img => {
+                    img.style.maxHeight = photoList.length === 1 ? '400px' : '260px';
+                    let wrap = document.createElement('div');
+                    wrap.className = 'ph';
+                    wrap.appendChild(img);
+                    photoDiv.appendChild(wrap);
+                });
+            } else {
+                photoDiv.style.gridTemplateColumns = '1fr';
+                photoDiv.innerHTML = '<i>ფოტო არ არის მიმაგრებული</i>';
+            }
+
+            element.style.display = 'block';
+            window.scrollTo(0, 0);
+
+            let opt = {
+                margin:       10,
+                filename:     `Ticket_${t.id}_${String(t.objectName).replace(/[\\/:*?"<>|]/g, '-')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css'] }
+            };
+
             await html2pdf().set(opt).from(element).save();
+        } catch (err) {
+            alert('⚠️ PDF-ის შექმნა ვერ მოხერხდა: ' + (err.message || err));
         } finally {
             element.style.display = 'none';
+            document.body.style.cursor = '';
         }
     }
 
+    // ===== სტატუსი და ცხრილი =====
     function getEffectivePriority(t) {
         if (t.closed) return 'დახურული';
         let today = new Date().toISOString().split('T')[0];
@@ -537,6 +615,18 @@
         if (status === 'ვადაში') return '<span class="badge badge-low">ვადაში</span>';
         if (status === 'ვადაგადაცილებული') return '<span class="badge badge-overdue">ვადაგადაცილებული</span>';
         return status;
+    }
+
+    function actionButtons(t, i) {
+        let pdf = `<button class="action-btn btn-print" onclick="downloadPdfIndex(${i})">📥 PDF</button>`;
+        if (!isEditor) return pdf;
+        let closeBtn = t.closed
+            ? `<button class="action-btn btn-reopen" onclick="toggleClose(${i})">↩ გახსნა</button>`
+            : `<button class="action-btn btn-close" onclick="toggleClose(${i})">✔ დახურვა</button>`;
+        return closeBtn +
+            `<button class="action-btn btn-wa" onclick="sendWhatsApp(${i})">📲 WA</button>` +
+            pdf +
+            `<button class="action-btn btn-delete" onclick="deleteTicket(${i})">🗑️</button>`;
     }
 
     function renderTable() {
@@ -563,11 +653,12 @@
             let effStatus = getEffectivePriority(t);
             let matchesSearch = t.id.toLowerCase().includes(search) || t.objectName.toLowerCase().includes(search) || (t.assignee && t.assignee.toLowerCase().includes(search));
             let matchesFilter = (filter === 'ALL') || (effStatus === filter);
+            let pc = t.photoCount || (t.photo ? 1 : 0);
 
             if (matchesSearch && matchesFilter) {
                 tbody.innerHTML += `
                     <tr>
-                        <td data-label="ID"><b>#${t.id}</b></td>
+                        <td data-label="ID"><span><b>#${t.id}</b>${pc ? `<br><small style="color:#64748b;">📷 ${pc}</small>` : ''}</span></td>
                         <td data-label="ობიექტი / სართული"><span>${t.objectName}<br><small style="color:#64748b;">სართული: ${t.floor||'-'}</small></span></td>
                         <td data-label="პასუხისმგებელი">${t.assignee||'-'}</td>
                         <td data-label="დედლაინი">${t.deadline}</td>
@@ -577,6 +668,24 @@
                 `;
             }
         });
+    }
+
+    async function toggleClose(i) {
+        if (!isEditor) return;
+        let t = getTickets()[i];
+        if (!t) return;
+        let update;
+        if (t.closed) {
+            update = { closed: false, closedBy: '', closedDate: '' };
+        } else {
+            if (!confirm(`დავხუროთ თიქეთი #${t.id}?`)) return;
+            update = { closed: true, closedBy: currentUser, closedDate: new Date().toISOString().split('T')[0] };
+        }
+        try {
+            await db.collection('tickets').doc(docIdOf(t.id)).update(update);
+        } catch (err) {
+            alert('⚠️ სტატუსის შეცვლა ვერ მოხერხდა: ' + (err.message || err));
+        }
     }
 
     function sendWhatsApp(i) {
@@ -597,7 +706,7 @@
 
     function downloadPdfIndex(i) {
         let t = getTickets()[i];
-        downloadPDF(t);
+        if (t) downloadPDF(t);
     }
 
     async function deleteTicket(i) {
@@ -606,7 +715,11 @@
         if (!t) return;
         if (confirm('ნამდვილად გსურთ ამ თიქეთის წაშლა?')) {
             try {
-                await db.collection('tickets').doc(docIdOf(t.id)).delete();
+                let ps = await db.collection('photos').where('ticketId', '==', t.id).get();
+                let batch = db.batch();
+                ps.docs.forEach(d => batch.delete(d.ref));
+                batch.delete(db.collection('tickets').doc(docIdOf(t.id)));
+                await batch.commit();
             } catch (err) {
                 alert('⚠️ წაშლა ვერ მოხერხდა: ' + (err.message || err));
             }
