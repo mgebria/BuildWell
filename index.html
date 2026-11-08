@@ -21,7 +21,7 @@
 
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background: #fff; }
         .form-group input:disabled { background: #f1f5f9; color: #64748b; }
         .form-group textarea { height: 60px; resize: vertical; }
 
@@ -30,10 +30,36 @@
         .btn:disabled { opacity: 0.6; cursor: wait; }
         .btn-success { background: #16a34a; }
         .btn-success:hover { background: #15803d; }
+        .btn-guest { background: #e2e8f0; color: #334155; }
+        .btn-guest:hover { background: #cbd5e1; }
 
-        .filter-bar { display: flex; gap: 10px; margin-bottom: 15px; }
-        .filter-bar input, .filter-bar select { padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
-        .filter-bar input { flex: 1; }
+        /* დაფა: სტატისტიკა და შეხსენებები */
+        .reminder { padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; font-size: 13px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer; }
+        .reminder-red { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .reminder-amber { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .reminder span.go { font-size: 12px; text-decoration: underline; white-space: nowrap; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+        .stat { background: #fff; border-radius: 8px; padding: 12px 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; border-left: 4px solid #2563eb; }
+        .stat:hover { box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
+        .stat .num { font-size: 26px; font-weight: 700; }
+        .stat .lbl { font-size: 12px; color: #64748b; }
+        .stat.s-open { border-left-color: #d97706; }
+        .stat.s-over { border-left-color: #b91c1c; }
+        .stat.s-closed { border-left-color: #16a34a; }
+        .obj-card { margin-bottom: 20px; padding: 12px 16px; }
+        .obj-card summary { cursor: pointer; font-weight: 700; font-size: 14px; color: #0f172a; }
+        .obj-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 8px 0; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+        .obj-row:last-child { border-bottom: none; }
+        .obj-row .chips span { margin-left: 10px; white-space: nowrap; }
+
+        /* ფილტრები */
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px; align-items: end; }
+        .filter-grid .f-search { grid-column: 1 / -1; }
+        .filter-grid input, .filter-grid select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #fff; }
+        .filter-grid .f-lbl { font-size: 11px; font-weight: 600; color: #475569; display: block; }
+        .filter-grid .f-lbl input { margin-top: 3px; font-weight: 400; }
+        .btn-reset { background: #e2e8f0; color: #334155; border: none; padding: 9px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+        .btn-reset:hover { background: #cbd5e1; }
 
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
@@ -41,15 +67,21 @@
 
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
         .badge-low { background: #e0f2fe; color: #0369a1; }
+        .badge-soon { background: #fef3c7; color: #b45309; }
         .badge-overdue { background: #7f1d1d; color: #ffffff; }
         .badge-closed { background: #dcfce7; color: #15803d; }
+        .dl-note { display: block; font-size: 11px; font-weight: 600; margin-top: 2px; }
+        .dl-red { color: #b91c1c; }
+        .dl-amber { color: #b45309; }
 
-        .action-btn { padding: 5px 8px; border-radius: 4px; border: none; font-size: 11px; cursor: pointer; margin-right: 2px; }
+        .action-btn { padding: 5px 8px; border-radius: 4px; border: none; font-size: 11px; cursor: pointer; margin-right: 2px; margin-bottom: 2px; }
         .btn-print { background: #0284c7; color: white; }
         .btn-wa { background: #25D366; color: white; }
         .btn-delete { background: #dc2626; color: white; }
         .btn-close { background: #16a34a; color: white; }
         .btn-reopen { background: #64748b; color: white; }
+        .btn-edit { background: #7c3aed; color: white; }
+        .btn-hist { background: #475569; color: white; }
 
         .header-right { display: flex; align-items: center; gap: 12px; font-size: 13px; }
         .logout-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
@@ -61,16 +93,24 @@
         .login-box h2 { font-size: 18px; color: #1e3a8a; margin-bottom: 5px; text-align: center; }
         .login-box p { font-size: 12px; color: #64748b; text-align: center; margin-bottom: 18px; }
         .login-error { color: #b91c1c; font-size: 12px; margin-bottom: 8px; display: none; }
-        .btn-guest { background: #e2e8f0; color: #334155; }
-        .btn-guest:hover { background: #cbd5e1; }
 
-        /* ფოტოების გადახედვა ფორმაში */
+        /* ფოტოების გადახედვა */
         .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
         .thumb { position: relative; }
         .thumb img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; display: block; }
         .thumb button { position: absolute; top: 3px; right: 3px; background: #dc2626; color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 13px; cursor: pointer; line-height: 22px; padding: 0; }
         .photo-count { font-size: 11px; color: #64748b; margin-top: 4px; }
         .form-msg { background: #dcfce7; color: #15803d; padding: 8px 10px; border-radius: 6px; font-size: 12px; margin-top: 8px; display: none; }
+        .edit-banner { background: #ede9fe; color: #5b21b6; padding: 8px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 12px; display: none; }
+
+        /* მოდალური ფანჯარა */
+        #modal { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); align-items: center; justify-content: center; z-index: 900; padding: 12px; }
+        .modal-box { background: #fff; border-radius: 10px; padding: 20px; width: 480px; max-width: 100%; max-height: 88vh; overflow: auto; position: relative; }
+        .modal-box h3 { font-size: 16px; margin-bottom: 12px; padding-right: 24px; }
+        .modal-x { position: absolute; top: 8px; right: 10px; background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; }
+        .hist { border-left: 3px solid #2563eb; padding: 6px 10px; margin: 8px 0; background: #f8fafc; border-radius: 4px; font-size: 13px; }
+        .hist small { color: #64748b; }
+        .hist-line { font-size: 12px; color: #334155; margin-top: 2px; word-break: break-word; }
 
         /* PDF გენერირების დიზაინი */
         #pdfTemplate {
@@ -100,20 +140,21 @@
             .app-header h1 { font-size: 16px; }
             .header-right { width: 100%; justify-content: space-between; flex-wrap: wrap; }
             .card { padding: 14px; }
+            .stats { grid-template-columns: 1fr 1fr; }
             /* iOS-ზე ზუმის თავიდან ასაცილებლად */
             .form-group input, .form-group select, .form-group textarea,
-            .filter-bar input, .filter-bar select, .login-box input { font-size: 16px; padding: 10px; }
+            .filter-grid input, .filter-grid select, .login-box input { font-size: 16px; padding: 10px; }
             .btn { padding: 13px; font-size: 15px; }
-            .filter-bar { flex-direction: column; }
+            .filter-grid { grid-template-columns: 1fr 1fr; }
 
             /* ცხრილი -> ბარათები */
-            table, thead, tbody, tr, td { display: block; width: 100%; }
-            thead { display: none; }
-            tr { border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; background: #fff; }
-            td { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; border: none; padding: 6px 0; text-align: right; }
-            td::before { content: attr(data-label); font-weight: 600; color: #475569; text-align: left; flex-shrink: 0; }
-            td[data-label="მოქმედება"] { flex-wrap: wrap; justify-content: flex-start; gap: 6px; padding-top: 10px; border-top: 1px solid #e2e8f0; margin-top: 4px; }
-            td[data-label="მოქმედება"]::before { display: none; }
+            #ticketsTable, #ticketsTable thead, #ticketTable, #ticketTable tr, #ticketTable td { display: block; width: 100%; }
+            #ticketsTable thead { display: none; }
+            #ticketTable tr { border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; background: #fff; }
+            #ticketTable td { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; border: none; padding: 6px 0; text-align: right; }
+            #ticketTable td::before { content: attr(data-label); font-weight: 600; color: #475569; text-align: left; flex-shrink: 0; }
+            #ticketTable td[data-label="მოქმედება"] { flex-wrap: wrap; justify-content: flex-start; gap: 6px; padding-top: 10px; border-top: 1px solid #e2e8f0; margin-top: 4px; }
+            #ticketTable td[data-label="მოქმედება"]::before { display: none; }
             .action-btn { padding: 10px 12px; font-size: 13px; margin: 0; }
         }
     </style>
@@ -146,24 +187,27 @@
     </div>
 </div>
 
+<!-- შეხსენებები და სტატისტიკა -->
+<div id="reminderBox"></div>
+<div class="stats" id="statsBox"></div>
+<details class="card obj-card">
+    <summary>📊 ობიექტების მიხედვით</summary>
+    <div id="objStats"></div>
+</details>
+
 <div class="main-layout">
     <!-- ფორმა -->
     <div class="card" id="formCard">
-        <div class="card-title">+ ახალი თიქეთის შექმნა</div>
+        <div class="card-title" id="formTitle">+ ახალი თიქეთის შექმნა</div>
+        <div class="edit-banner" id="editBanner"></div>
         <form id="ticketForm">
             <div class="form-group">
                 <label>ხარვეზის ID:</label>
-                <input type="text" value="ავტომატურად მიენიჭება შენახვისას" disabled>
+                <input type="text" id="idField" value="ავტომატურად მიენიჭება შენახვისას" disabled>
             </div>
             <div class="form-group">
                 <label>ობიექტის დასახელება:</label>
-                <select id="objectName" required>
-                    <option value="" disabled selected>აირჩიეთ ობიექტი...</option>
-                    <option value="არქი დიღომი 3 C/D">არქი დიღომი 3 C/D</option>
-                    <option value="არქი გურამიშვილი">არქი გურამიშვილი</option>
-                    <option value="არქი უნივერსი">არქი უნივერსი</option>
-                    <option value="არქი ჰორაიზონი">არქი ჰორაიზონი</option>
-                </select>
+                <select id="objectName" required></select>
             </div>
             <div class="form-group">
                 <label>სართული:</label>
@@ -175,15 +219,15 @@
             </div>
             <div class="form-group">
                 <label>პასუხისმგებელი პირი:</label>
-                <input type="text" id="assignee" placeholder="მაგ: მიშა / თენგიზი">
+                <input type="text" id="assignee" list="assigneeList" autocomplete="off" placeholder="სახელი, გვარი">
             </div>
             <div class="form-group">
                 <label>ხარისხის მენეჯერი:</label>
-                <input type="text" id="qualityManager" value="დავით ბარბაქაძე">
+                <input type="text" id="qualityManager" list="qmList" autocomplete="off" placeholder="სახელი, გვარი">
             </div>
             <div class="form-group">
                 <label>ხარვეზის ტიპი:</label>
-                <input type="text" id="defectType" placeholder="მაგ: ბეტონის დამცავი შრე">
+                <input type="text" id="defectType" list="defectTypeList" autocomplete="off" placeholder="მაგ: ბეტონის დამცავი შრე">
             </div>
             <div class="form-group">
                 <label>პრობლემის აღწერილობა:</label>
@@ -195,11 +239,12 @@
             </div>
             <div class="form-group">
                 <label>ფოტოების მიმაგრება (მაქს. 10):</label>
-                <input type="file" id="photoInput" accept="image/*" multiple onchange="addPhotos(this)">
+                <input type="file" id="photoInput" accept="image/*" multiple onchange="addPhotos(this, 'form')">
                 <div class="photo-grid" id="photoPreview"></div>
                 <div class="photo-count" id="photoCount"></div>
             </div>
-            <button type="submit" class="btn btn-success">💾 ბაზაში შენახვა & PDF გადმოწერა</button>
+            <button type="submit" class="btn btn-success" id="submitBtn">💾 ბაზაში შენახვა & PDF გადმოწერა</button>
+            <button type="button" class="btn btn-guest" id="cancelEditBtn" style="display:none;" onclick="cancelEdit()">✖ რედაქტირების გაუქმება</button>
             <div class="form-msg" id="formMsg"></div>
         </form>
     </div>
@@ -208,16 +253,23 @@
     <div class="card">
         <div class="card-title">📋 შენახული თიქეთების ბაზა</div>
         <div id="migrateBox" style="display:none; background:#fef3c7; color:#92400e; padding:10px; border-radius:6px; margin-bottom:12px; font-size:13px;"></div>
-        <div class="filter-bar">
-            <input type="text" id="searchInput" placeholder="🔍 ძებნა ID-ით, ობიექტით ან პასუხისმგებლით..." oninput="renderTable()">
+        <div class="filter-grid">
+            <input type="text" class="f-search" id="searchInput" placeholder="🔍 ძებნა ID-ით, ობიექტით, პასუხისმგებლით ან ხარვეზის ტიპით..." oninput="renderTable()">
+            <select id="objectFilter" onchange="renderTable()"></select>
+            <select id="assigneeFilter" onchange="renderTable()"></select>
             <select id="statusFilter" onchange="renderTable()">
                 <option value="ALL">ყველა სტატუსი</option>
+                <option value="OPEN">ღია (დაუხურავი)</option>
                 <option value="ვადაში">ვადაში</option>
+                <option value="მალე იწურება">მალე იწურება</option>
                 <option value="ვადაგადაცილებული">ვადაგადაცილებული</option>
                 <option value="დახურული">დახურული</option>
             </select>
+            <label class="f-lbl">დედლაინი: დან<input type="date" id="dateFrom" onchange="renderTable()"></label>
+            <label class="f-lbl">დედლაინი: მდე<input type="date" id="dateTo" onchange="renderTable()"></label>
+            <button type="button" class="btn-reset" onclick="resetFilters()">✖ გასუფთავება</button>
         </div>
-        <table>
+        <table id="ticketsTable">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -233,6 +285,18 @@
     </div>
 </div>
 
+<datalist id="assigneeList"></datalist>
+<datalist id="qmList"></datalist>
+<datalist id="defectTypeList"></datalist>
+
+<!-- მოდალური ფანჯარა (ისტორია / დახურვა) -->
+<div id="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-box">
+        <button class="modal-x" onclick="closeModal()">×</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
 <!-- ფარული შაბლონი PDF-ის დასაგენერირებლად -->
 <div id="pdfTemplate">
     <div class="pdf-header">მიმდინარე სამშენებლო-სამონტაჟო სამუშაოების შეფასება</div>
@@ -243,11 +307,59 @@
     <div class="pdf-box" id="pdfRec" style="border-left-color: #16a34a;"></div>
     <div class="pdf-title">ფოტო მასალა:</div>
     <div class="pdf-photo" id="pdfPhoto"></div>
+    <div id="pdfFix" style="display:none;">
+        <div class="pdf-title">გამოსწორების კომენტარი:</div>
+        <div class="pdf-box" id="pdfFixComment" style="border-left-color: #16a34a;"></div>
+        <div class="pdf-title">გამოსწორების შემდგომი ფოტო მასალა:</div>
+        <div class="pdf-photo" id="pdfFixPhoto"></div>
+    </div>
 </div>
 
 <script>
+    // ===== ზოგადი დამხმარე ფუნქციები =====
+    const OBJECTS = ['არქი დიღომი 3 C/D', 'არქი გურამიშვილი', 'არქი უნივერსი', 'არქი ჰორაიზონი'];
+    const SOON_DAYS = 3;                 // რამდენი დღით ადრე გამოჩნდეს "მალე იწურება"
+    const MAX_PHOTOS = 10;
+    const ID_PREFIX = 'BW-';             // ავტომატური ID-ის პრეფიქსი (მაგ: BW-00001)
+    const CREATE_BTN_TEXT = '💾 ბაზაში შენახვა & PDF გადმოწერა';
+    const EDIT_BTN_TEXT = '💾 ცვლილებების შენახვა';
+
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function todayStr() {
+        let d = new Date();
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    // დღეების სხვაობა დღევანდელ დღესთან (უარყოფითი = გადაცილებულია)
+    function daysLeft(dl) {
+        if (!dl) return null;
+        let p = dl.split('-').map(Number);
+        let a = new Date(p[0], p[1] - 1, p[2]);
+        let n = new Date();
+        let b = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+        return Math.round((a - b) / 86400000);
+    }
+
+    function fmtDate(ms) {
+        let d = new Date(ms);
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') +
+               ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    }
+
+    function cut(s, n) {
+        s = String(s == null ? '' : s);
+        return s.length > n ? s.slice(0, n) + '…' : s;
+    }
+
+    function uniqueSorted(arr) {
+        return Array.from(new Set(arr.map(x => String(x || '').trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'ka'));
+    }
+
     // ===== ავტორიზაცია =====
-    // ავტორიზებული მომხმარებლები (მხოლოდ მათ შეუძლიათ თიქეთის გახსნა/დახურვა/წაშლა)
+    // ავტორიზებული მომხმარებლები (მხოლოდ მათ შეუძლიათ თიქეთის გახსნა/რედაქტირება/დახურვა/წაშლა)
     const USERS = {
         'g.michilashvili': 'Michilashvili2026',
         'g.bajelidze': 'Bajelidze2026',
@@ -289,6 +401,7 @@
         document.body.classList.toggle('viewer', !isEditor);
         document.getElementById('userInfo').innerText = !currentUser ? '' :
             (isEditor ? '👤 ' + currentUser : '👁 სტუმარი (მხოლოდ ნახვა და გადმოწერა)');
+        if (!isEditor && editingId) cancelEdit();
         renderTable();
     }
 
@@ -303,17 +416,15 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
-    const ID_PREFIX = 'BW-';   // ავტომატური ID-ის პრეფიქსი (მაგ: BW-00001)
-    const MAX_PHOTOS = 10;
+    const FV = firebase.firestore.FieldValue;
 
     let ticketsCache = [];
     let dbLoaded = false;
     let dbError = '';
 
     function docIdOf(id) { return encodeURIComponent(id); }
-
     function getTickets() { return ticketsCache; }
+    function findTicket(id) { return ticketsCache.find(t => t.id === id); }
 
     function startListener() {
         db.collection('tickets').onSnapshot(snap => {
@@ -321,6 +432,9 @@
             ticketsCache.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
             dbLoaded = true;
             dbError = '';
+            refreshDatalists();
+            refreshAssigneeFilter();
+            renderDashboard();
             renderTable();
         }, err => {
             dbError = err.message || String(err);
@@ -328,7 +442,7 @@
         });
     }
 
-    // უნიკალური ID-ის ავტომატური მინიჭება (მრიცხველი ტრანზაქციით — ორი ადამიანი ერთსა და იმავე ნომერს ვერასდროს მიიღებს)
+    // უნიკალური ID-ის ავტომატური მინიჭება (მრიცხველი ტრანზაქციით)
     async function createTicket(base, photoCount) {
         let counterRef = db.collection('meta').doc('counter');
         return db.runTransaction(async tx => {
@@ -342,29 +456,116 @@
         });
     }
 
-    // ფოტოები ინახება ცალკე კოლექციაში (ერთი ფოტო = ერთი ჩანაწერი)
+    // ფოტოები ინახება ცალკე კოლექციაში. kind: 'defect' (ხარვეზი) ან 'fix' (გამოსწორება)
+    function photoDocs(batch, ticketId, list, kind) {
+        let stamp = Date.now();
+        list.forEach((data, idx) => {
+            let ref = db.collection('photos').doc(docIdOf(ticketId) + '_' + (kind === 'fix' ? 'f' : 'd') + stamp + '_' + idx);
+            batch.set(ref, { ticketId: ticketId, kind: kind, order: idx, data: data });
+        });
+    }
+
     async function savePhotos(ticketId, list) {
         if (!list.length) return;
         let batch = db.batch();
-        list.forEach((data, idx) => {
-            let ref = db.collection('photos').doc(docIdOf(ticketId) + '_' + idx);
-            batch.set(ref, { ticketId: ticketId, order: idx, data: data });
-        });
+        photoDocs(batch, ticketId, list, 'defect');
         await batch.commit();
     }
 
     async function fetchPhotos(t) {
-        let list = [];
-        if ((t.photoCount || 0) > 0) {
+        let defect = [], fix = [];
+        if (((t.photoCount || 0) + (t.fixPhotoCount || 0)) > 0) {
             let snap = await db.collection('photos').where('ticketId', '==', t.id).get();
-            list = snap.docs.map(d => d.data()).sort((a, b) => a.order - b.order).map(p => p.data);
+            let docs = snap.docs.map(d => d.data()).sort((a, b) => (a.order || 0) - (b.order || 0));
+            docs.forEach(p => (p.kind === 'fix' ? fix : defect).push(p.data));
         }
-        if (!list.length && t.photo) list = [t.photo]; // ძველი ტიპის (ერთფოტოიანი) თიქეთები
-        return list;
+        if (!defect.length && t.photo) defect = [t.photo]; // ძველი ტიპის (ერთფოტოიანი) თიქეთები
+        return { defect: defect, fix: fix };
     }
 
-    // ===== ფოტოების არჩევა (მაქს. 10) =====
-    let photos = [];
+    // ===== datalist-ები და ფილტრის სიები =====
+    function refreshDatalists() {
+        let fill = (id, arr) => {
+            document.getElementById(id).innerHTML = arr.map(v => `<option value="${esc(v)}">`).join('');
+        };
+        fill('assigneeList', uniqueSorted(ticketsCache.map(t => t.assignee)));
+        fill('qmList', uniqueSorted(ticketsCache.map(t => t.qualityManager || t.supervisor)));
+        fill('defectTypeList', uniqueSorted(ticketsCache.map(t => t.defectType || t.groups)));
+    }
+
+    function refreshAssigneeFilter() {
+        let sel = document.getElementById('assigneeFilter');
+        let cur = sel.value;
+        let names = uniqueSorted(ticketsCache.map(t => t.assignee));
+        sel.innerHTML = '<option value="ALL">ყველა პასუხისმგებელი</option>' +
+            names.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+        sel.value = names.includes(cur) ? cur : 'ALL';
+    }
+
+    function initObjectOptions() {
+        document.getElementById('objectName').innerHTML =
+            '<option value="" disabled selected>აირჩიეთ ობიექტი...</option>' +
+            OBJECTS.map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('');
+        document.getElementById('objectFilter').innerHTML =
+            '<option value="ALL">ყველა ობიექტი</option>' +
+            OBJECTS.map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('');
+    }
+
+    function resetFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('objectFilter').value = 'ALL';
+        document.getElementById('assigneeFilter').value = 'ALL';
+        document.getElementById('statusFilter').value = 'ALL';
+        document.getElementById('dateFrom').value = '';
+        document.getElementById('dateTo').value = '';
+        renderTable();
+    }
+
+    function setStatusFilter(v) {
+        resetFilters();
+        document.getElementById('statusFilter').value = v;
+        renderTable();
+        document.getElementById('ticketsTable').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ===== დაფა: სტატისტიკა და შეხსენებები =====
+    function renderDashboard() {
+        let all = ticketsCache;
+        let open = all.filter(t => !t.closed);
+        let overdue = all.filter(t => getEffectivePriority(t) === 'ვადაგადაცილებული');
+        let soon = all.filter(t => getEffectivePriority(t) === 'მალე იწურება');
+        let closed = all.filter(t => t.closed);
+
+        document.getElementById('statsBox').innerHTML =
+            `<div class="stat" onclick="setStatusFilter('ALL')"><div class="num">${all.length}</div><div class="lbl">სულ თიქეთი</div></div>` +
+            `<div class="stat s-open" onclick="setStatusFilter('OPEN')"><div class="num">${open.length}</div><div class="lbl">ღია (დაუხურავი)</div></div>` +
+            `<div class="stat s-over" onclick="setStatusFilter('ვადაგადაცილებული')"><div class="num">${overdue.length}</div><div class="lbl">ვადაგადაცილებული</div></div>` +
+            `<div class="stat s-closed" onclick="setStatusFilter('დახურული')"><div class="num">${closed.length}</div><div class="lbl">დახურული</div></div>`;
+
+        let rem = '';
+        if (overdue.length) rem += `<div class="reminder reminder-red" onclick="setStatusFilter('ვადაგადაცილებული')"><div>⚠️ ვადაგადაცილებულია ${overdue.length} თიქეთი</div><span class="go">ნახვა</span></div>`;
+        if (soon.length) rem += `<div class="reminder reminder-amber" onclick="setStatusFilter('მალე იწურება')"><div>⏰ ${soon.length} თიქეთს ვადა ${SOON_DAYS} დღეში ეწურება</div><span class="go">ნახვა</span></div>`;
+        document.getElementById('reminderBox').innerHTML = rem;
+
+        // ობიექტების მიხედვით
+        let names = OBJECTS.slice();
+        uniqueSorted(all.map(t => t.objectName)).forEach(n => { if (!names.includes(n)) names.push(n); });
+        document.getElementById('objStats').innerHTML = names.map(n => {
+            let list = all.filter(t => t.objectName === n);
+            let o = list.filter(t => !t.closed).length;
+            let ov = list.filter(t => getEffectivePriority(t) === 'ვადაგადაცილებული').length;
+            let c = list.filter(t => t.closed).length;
+            return `<div class="obj-row"><div><b>${esc(n)}</b></div><div class="chips"><span>ღია: <b>${o}</b></span><span>⚠️ ${ov}</span><span>✔ ${c}</span></div></div>`;
+        }).join('');
+    }
+
+    // ===== ფოტოების არჩევა (ფორმა და დახურვის ფანჯარა) =====
+    const photoSets = { form: [], fix: [] };
+    const photoEls = {
+        form: { grid: 'photoPreview', count: 'photoCount' },
+        fix:  { grid: 'fixPreview',   count: 'fixCount' }
+    };
+    let photosDirty = false; // რედაქტირებისას შეიცვალა თუ არა ფოტოები
 
     function compressFile(file) {
         return new Promise((resolve, reject) => {
@@ -398,9 +599,10 @@
         });
     }
 
-    async function addPhotos(input) {
+    async function addPhotos(input, key) {
         let files = Array.from(input.files || []);
-        let free = MAX_PHOTOS - photos.length;
+        let list = photoSets[key];
+        let free = MAX_PHOTOS - list.length;
         if (files.length && free <= 0) {
             alert(`⚠️ მაქსიმუმ ${MAX_PHOTOS} ფოტოა დაშვებული.`);
         } else if (files.length > free) {
@@ -408,22 +610,28 @@
             files = files.slice(0, free);
         }
         for (let f of files) {
-            try { photos.push(await compressFile(f)); } catch (e) { /* გამოტოვება */ }
+            try { list.push(await compressFile(f)); if (key === 'form') photosDirty = true; } catch (e) { /* გამოტოვება */ }
         }
         input.value = '';
-        renderPhotoPreview();
+        renderPhotos(key);
     }
 
-    function removePhoto(i) {
-        photos.splice(i, 1);
-        renderPhotoPreview();
+    function removePhoto(key, i) {
+        photoSets[key].splice(i, 1);
+        if (key === 'form') photosDirty = true;
+        renderPhotos(key);
     }
 
-    function renderPhotoPreview() {
-        document.getElementById('photoPreview').innerHTML = photos.map((src, i) =>
-            `<div class="thumb"><img src="${src}"><button type="button" onclick="removePhoto(${i})">×</button></div>`
+    function renderPhotos(key) {
+        let list = photoSets[key];
+        let els = photoEls[key];
+        let grid = document.getElementById(els.grid);
+        let count = document.getElementById(els.count);
+        if (!grid || !count) return;
+        grid.innerHTML = list.map((src, i) =>
+            `<div class="thumb"><img src="${src}"><button type="button" onclick="removePhoto('${key}', ${i})">×</button></div>`
         ).join('');
-        document.getElementById('photoCount').innerText = photos.length ? `📷 ${photos.length} / ${MAX_PHOTOS}` : '';
+        count.innerText = list.length ? `📷 ${list.length} / ${MAX_PHOTOS}` : '';
     }
 
     function showFormMsg(text) {
@@ -431,6 +639,311 @@
         el.innerText = text;
         el.style.display = 'block';
         setTimeout(() => { el.style.display = 'none'; }, 8000);
+    }
+
+    // ===== ფორმა: შექმნა და რედაქტირება =====
+    let editingId = null;
+
+    const FIELD_LABELS = {
+        objectName: 'ობიექტი', floor: 'სართული', deadline: 'დედლაინი', assignee: 'პასუხისმგებელი',
+        qualityManager: 'ხარისხის მენეჯერი', defectType: 'ხარვეზის ტიპი',
+        problemDesc: 'პრობლემის აღწერა', recommendation: 'რეკომენდაცია'
+    };
+
+    function oldVal(t, k) {
+        if (k === 'qualityManager') return t.qualityManager || t.supervisor || '';
+        if (k === 'defectType') return t.defectType || t.groups || '';
+        return t[k] || '';
+    }
+
+    function readFormValues() {
+        let v = id => document.getElementById(id).value.trim();
+        return {
+            objectName: document.getElementById('objectName').value,
+            floor: v('floor'),
+            deadline: document.getElementById('deadline').value,
+            assignee: v('assignee'),
+            qualityManager: v('qualityManager'),
+            defectType: v('defectType'),
+            problemDesc: v('problemDesc'),
+            recommendation: v('recommendation')
+        };
+    }
+
+    function setFormMode(edit, id) {
+        document.getElementById('formTitle').innerText = edit ? '✏️ თიქეთის რედაქტირება' : '+ ახალი თიქეთის შექმნა';
+        let banner = document.getElementById('editBanner');
+        banner.style.display = edit ? 'block' : 'none';
+        banner.innerText = edit ? `თქვენ არედაქტირებთ თიქეთს #${id}` : '';
+        document.getElementById('idField').value = edit ? id : 'ავტომატურად მიენიჭება შენახვისას';
+        document.getElementById('submitBtn').innerText = edit ? EDIT_BTN_TEXT : CREATE_BTN_TEXT;
+        document.getElementById('cancelEditBtn').style.display = edit ? 'block' : 'none';
+    }
+
+    function removeTempOption() {
+        let sel = document.getElementById('objectName');
+        Array.from(sel.options).forEach(o => { if (o.dataset.temp) o.remove(); });
+    }
+
+    async function startEdit(i) {
+        if (!isEditor) return;
+        let t = getTickets()[i];
+        if (!t) return;
+        editingId = t.id;
+        removeTempOption();
+        let sel = document.getElementById('objectName');
+        if (t.objectName && !Array.from(sel.options).some(o => o.value === t.objectName)) {
+            let opt = document.createElement('option');
+            opt.value = t.objectName;
+            opt.textContent = t.objectName;
+            opt.dataset.temp = '1';
+            sel.appendChild(opt);
+        }
+        sel.value = t.objectName || '';
+        document.getElementById('floor').value = t.floor || '';
+        document.getElementById('deadline').value = t.deadline || '';
+        document.getElementById('assignee').value = t.assignee || '';
+        document.getElementById('qualityManager').value = oldVal(t, 'qualityManager');
+        document.getElementById('defectType').value = oldVal(t, 'defectType');
+        document.getElementById('problemDesc').value = t.problemDesc || '';
+        document.getElementById('recommendation').value = t.recommendation || '';
+        setFormMode(true, t.id);
+        photoSets.form = [];
+        photosDirty = false;
+        renderPhotos('form');
+        document.getElementById('photoCount').innerText = '⏳ ფოტოები იტვირთება...';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        try {
+            let ph = await fetchPhotos(t);
+            if (editingId === t.id) {
+                photoSets.form = ph.defect.slice();
+                photosDirty = false;
+                renderPhotos('form');
+            }
+        } catch (err) {
+            document.getElementById('photoCount').innerText = '';
+        }
+    }
+
+    function cancelEdit() {
+        editingId = null;
+        document.getElementById('ticketForm').reset();
+        removeTempOption();
+        photoSets.form = [];
+        photosDirty = false;
+        renderPhotos('form');
+        setFormMode(false);
+    }
+
+    document.getElementById('ticketForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (!isEditor) return;
+        if (editingId) { await saveEdit(); return; }
+
+        let form = this;
+        let btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = '⏳ ინახება...';
+        let photoList = photoSets.form.slice();
+
+        try {
+            let now = Date.now();
+            let base = Object.assign(readFormValues(), {
+                date: todayStr(),
+                createdBy: currentUser,
+                createdAt: now,
+                closed: false,
+                closedBy: '',
+                closedDate: '',
+                closeComment: '',
+                fixPhotoCount: 0,
+                history: [{ at: now, by: currentUser, action: 'created' }]
+            });
+
+            let newId;
+            try {
+                newId = await createTicket(base, photoList.length);
+            } catch (err) {
+                alert('⚠️ ბაზაში შენახვა ვერ მოხერხდა: ' + (err.message || err));
+                return;
+            }
+
+            let ticket = Object.assign({ id: newId, photoCount: photoList.length }, base);
+
+            try {
+                await savePhotos(newId, photoList);
+            } catch (err) {
+                alert('⚠️ თიქეთი შეიქმნა, მაგრამ ფოტოების შენახვა ვერ მოხერხდა: ' + (err.message || err));
+            }
+
+            showFormMsg(`✅ თიქეთი #${newId} შეიქმნა`);
+
+            // ავტომატურად PDF-ის გადმოწერა შენახვისას
+            downloadPDF(ticket, { defect: photoList, fix: [] });
+
+            form.reset();
+            photoSets.form = [];
+            photosDirty = false;
+            renderPhotos('form');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = editingId ? EDIT_BTN_TEXT : CREATE_BTN_TEXT;
+        }
+    });
+
+    async function saveEdit() {
+        let t = findTicket(editingId);
+        if (!t) { alert('⚠️ თიქეთი ვერ მოიძებნა.'); cancelEdit(); return; }
+
+        let vals = readFormValues();
+        let changes = [];
+        Object.keys(FIELD_LABELS).forEach(k => {
+            let a = String(oldVal(t, k) || ''), b = String(vals[k] || '');
+            if (a !== b) changes.push({ f: FIELD_LABELS[k], from: cut(a, 80), to: cut(b, 80) });
+        });
+        if (photosDirty) changes.push({ f: 'ფოტოები', from: '', to: `${photoSets.form.length} ფოტო` });
+        if (!changes.length) { showFormMsg('ცვლილება არ არის.'); return; }
+
+        let btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerText = '⏳ ინახება...';
+        try {
+            let batch = db.batch();
+            let ref = db.collection('tickets').doc(docIdOf(t.id));
+            let update = Object.assign({}, vals, {
+                history: FV.arrayUnion({ at: Date.now(), by: currentUser, action: 'edited', changes: changes })
+            });
+            if (photosDirty) {
+                let snap = await db.collection('photos').where('ticketId', '==', t.id).get();
+                snap.docs.forEach(d => { if (d.data().kind !== 'fix') batch.delete(d.ref); });
+                photoDocs(batch, t.id, photoSets.form, 'defect');
+                update.photoCount = photoSets.form.length;
+                if (t.photo) update.photo = FV.delete();
+            }
+            batch.update(ref, update);
+            await batch.commit();
+            cancelEdit();
+            showFormMsg(`✅ თიქეთი #${t.id} განახლდა`);
+        } catch (err) {
+            alert('⚠️ შენახვა ვერ მოხერხდა: ' + (err.message || err));
+        } finally {
+            btn.disabled = false;
+            btn.innerText = editingId ? EDIT_BTN_TEXT : CREATE_BTN_TEXT;
+        }
+    }
+
+    // ===== მოდალური ფანჯარა =====
+    function openModal(html) {
+        document.getElementById('modalBody').innerHTML = html;
+        document.getElementById('modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('modal').style.display = 'none';
+        document.getElementById('modalBody').innerHTML = '';
+        fixTargetId = null;
+    }
+
+    // ===== ისტორია =====
+    function buildHistory(t) {
+        if (Array.isArray(t.history) && t.history.length) {
+            return t.history.slice().sort((a, b) => a.at - b.at);
+        }
+        // ძველი თიქეთები, რომლებსაც ისტორიის ჩანაწერი არ აქვთ
+        let h = [];
+        h.push({ at: t.createdAt || 0, by: t.createdBy || '', action: 'created', legacyDate: t.date });
+        if (t.closed) h.push({ at: 0, by: t.closedBy || '', action: 'closed', legacyDate: t.closedDate });
+        return h;
+    }
+
+    function showHistory(i) {
+        let t = getTickets()[i];
+        if (!t) return;
+        let labels = { created: '🆕 თიქეთი შეიქმნა', edited: '✏️ შეიცვალა', closed: '✔ დაიხურა', reopened: '↩ ხელახლა გაიხსნა' };
+        let rows = buildHistory(t).map(h => {
+            let when = h.at ? fmtDate(h.at) : (h.legacyDate || '');
+            let detail = '';
+            if (h.action === 'edited' && Array.isArray(h.changes)) {
+                detail = h.changes.map(c => c.from !== '' || c.f !== 'ფოტოები'
+                    ? `<div class="hist-line"><b>${esc(c.f)}:</b> ${esc(c.from) || '—'} → ${esc(c.to) || '—'}</div>`
+                    : `<div class="hist-line"><b>${esc(c.f)}:</b> განახლდა (${esc(c.to)})</div>`).join('');
+            }
+            if (h.action === 'closed') {
+                if (h.note) detail += `<div class="hist-line">💬 ${esc(h.note)}</div>`;
+                if (h.fixPhotos) detail += `<div class="hist-line">📷 გამოსწორების ფოტო: ${esc(h.fixPhotos)}</div>`;
+            }
+            return `<div class="hist"><div><b>${labels[h.action] || esc(h.action)}</b></div><small>${esc(when)}${h.by ? ' · ' + esc(h.by) : ''}</small>${detail}</div>`;
+        }).join('');
+        openModal(`<h3>🕘 ისტორია #${esc(t.id)}</h3>${rows}`);
+    }
+
+    // ===== დახურვა გამოსწორების ფოტოთი =====
+    let fixTargetId = null;
+
+    function toggleClose(i) {
+        if (!isEditor) return;
+        let t = getTickets()[i];
+        if (!t) return;
+        if (t.closed) {
+            if (confirm(`თიქეთი #${t.id} ხელახლა გავხსნათ?`)) reopenTicket(t);
+            return;
+        }
+        fixTargetId = t.id;
+        photoSets.fix = [];
+        openModal(
+            `<h3>✔ თიქეთის დახურვა #${esc(t.id)}</h3>` +
+            `<div class="form-group"><label>კომენტარი (რა გაკეთდა):</label><textarea id="fixComment"></textarea></div>` +
+            `<div class="form-group"><label>გამოსწორების შემდგომი ფოტოები (მაქს. ${MAX_PHOTOS}):</label>` +
+            `<input type="file" id="fixInput" accept="image/*" multiple onchange="addPhotos(this, 'fix')">` +
+            `<div class="photo-grid" id="fixPreview"></div><div class="photo-count" id="fixCount"></div></div>` +
+            `<button class="btn btn-success" id="fixSaveBtn" onclick="confirmClose()">✔ თიქეთის დახურვა</button>` +
+            `<button class="btn btn-guest" onclick="closeModal()">გაუქმება</button>`
+        );
+    }
+
+    async function confirmClose() {
+        if (!isEditor || !fixTargetId) return;
+        let t = findTicket(fixTargetId);
+        if (!t) { closeModal(); return; }
+        let comment = document.getElementById('fixComment').value.trim();
+        let list = photoSets.fix.slice();
+        let btn = document.getElementById('fixSaveBtn');
+        btn.disabled = true;
+        btn.innerText = '⏳ ინახება...';
+        try {
+            let batch = db.batch();
+            let snap = await db.collection('photos').where('ticketId', '==', t.id).get();
+            snap.docs.forEach(d => { if (d.data().kind === 'fix') batch.delete(d.ref); });
+            photoDocs(batch, t.id, list, 'fix');
+            batch.update(db.collection('tickets').doc(docIdOf(t.id)), {
+                closed: true,
+                closedBy: currentUser,
+                closedDate: todayStr(),
+                closeComment: comment,
+                fixPhotoCount: list.length,
+                history: FV.arrayUnion({ at: Date.now(), by: currentUser, action: 'closed', note: comment, fixPhotos: list.length })
+            });
+            await batch.commit();
+            photoSets.fix = [];
+            closeModal();
+        } catch (err) {
+            alert('⚠️ დახურვა ვერ მოხერხდა: ' + (err.message || err));
+            btn.disabled = false;
+            btn.innerText = '✔ თიქეთის დახურვა';
+        }
+    }
+
+    async function reopenTicket(t) {
+        try {
+            await db.collection('tickets').doc(docIdOf(t.id)).update({
+                closed: false,
+                closedBy: '',
+                closedDate: '',
+                history: FV.arrayUnion({ at: Date.now(), by: currentUser, action: 'reopened' })
+            });
+        } catch (err) {
+            alert('⚠️ გახსნა ვერ მოხერხდა: ' + (err.message || err));
+        }
     }
 
     // ===== ძველი (ლოკალური) თიქეთების გადატანა საერთო ბაზაში =====
@@ -472,119 +985,71 @@
         renderTable();
     }
 
-    // ===== ახალი თიქეთის შენახვა =====
-    document.getElementById('ticketForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        if (!isEditor) return;
-
-        let form = this;
-        let btn = form.querySelector('button[type="submit"]');
-        let oldText = btn.innerText;
-        btn.disabled = true;
-        btn.innerText = '⏳ ინახება...';
-        let photoList = photos.slice();
-
-        try {
-            let base = {
-                objectName: document.getElementById('objectName').value,
-                floor: document.getElementById('floor').value,
-                deadline: document.getElementById('deadline').value,
-                assignee: document.getElementById('assignee').value,
-                qualityManager: document.getElementById('qualityManager').value,
-                defectType: document.getElementById('defectType').value,
-                problemDesc: document.getElementById('problemDesc').value,
-                recommendation: document.getElementById('recommendation').value,
-                date: new Date().toISOString().split('T')[0],
-                createdBy: currentUser,
-                createdAt: Date.now(),
-                closed: false,
-                closedBy: '',
-                closedDate: ''
-            };
-
-            let newId;
-            try {
-                newId = await createTicket(base, photoList.length);
-            } catch (err) {
-                alert('⚠️ ბაზაში შენახვა ვერ მოხერხდა: ' + (err.message || err));
-                return;
-            }
-
-            let ticket = Object.assign({ id: newId, photoCount: photoList.length }, base);
-
-            try {
-                await savePhotos(newId, photoList);
-            } catch (err) {
-                alert('⚠️ თიქეთი შეიქმნა, მაგრამ ფოტოების შენახვა ვერ მოხერხდა: ' + (err.message || err));
-            }
-
-            showFormMsg(`✅ თიქეთი #${newId} შეიქმნა`);
-
-            // ავტომატურად PDF-ის გადმოწერა შენახვისას
-            downloadPDF(ticket, photoList);
-
-            form.reset();
-            photos = [];
-            renderPhotoPreview();
-        } finally {
-            btn.disabled = false;
-            btn.innerText = oldText;
-        }
-    });
-
     // ===== PDF =====
-    async function downloadPDF(t, photoList) {
+    async function fillPhotoGrid(div, list, emptyText) {
+        div.innerHTML = '';
+        if (!list.length) {
+            div.style.gridTemplateColumns = '1fr';
+            div.innerHTML = `<i>${emptyText}</i>`;
+            return;
+        }
+        div.style.gridTemplateColumns = list.length === 1 ? '1fr' : '1fr 1fr';
+        let imgs = await Promise.all(list.map(src => new Promise(resolve => {
+            let img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => resolve(img);
+            img.src = src;
+        })));
+        imgs.forEach(img => {
+            img.style.maxHeight = list.length === 1 ? '400px' : '260px';
+            let wrap = document.createElement('div');
+            wrap.className = 'ph';
+            wrap.appendChild(img);
+            div.appendChild(wrap);
+        });
+    }
+
+    async function downloadPDF(t, photoData) {
         document.body.style.cursor = 'wait';
         let element = document.getElementById('pdfTemplate');
         try {
-            if (!photoList) photoList = await fetchPhotos(t);
+            if (!photoData) photoData = await fetchPhotos(t);
             let effStatus = getEffectivePriority(t);
 
             document.getElementById('pdfGrid').innerHTML = `
-                <div><b>დაფიქსირებული ხარვეზი:</b> #${t.id}</div>
-                <div><b>გახსნის თარიღი:</b> ${t.date}</div>
-                <div><b>ობიექტის დასახელება:</b> ${t.objectName}</div>
-                <div><b>დედლაინი:</b> ${t.deadline}</div>
-                <div><b>სართული:</b> ${t.floor || 'მითითებული არ არის'}</div>
-                <div><b>სტატუსი:</b> ${effStatus}</div>
-                <div><b>პასუხისმგებელი პირი:</b> ${t.assignee || '-'}</div>
-                <div><b>ხარისხის მენეჯერი:</b> ${t.qualityManager || t.supervisor || '-'}</div>
-                <div><b>ხარვეზის ტიპი:</b> ${t.defectType || t.groups || '-'}</div>
-                <div><b>თიქეთი გახსნა:</b> ${t.createdBy || '-'}</div>
-                ${t.closed ? `<div><b>დახურვის თარიღი:</b> ${t.closedDate || '-'}</div><div><b>დახურა:</b> ${t.closedBy || '-'}</div>` : ''}
+                <div><b>დაფიქსირებული ხარვეზი:</b> #${esc(t.id)}</div>
+                <div><b>გახსნის თარიღი:</b> ${esc(t.date)}</div>
+                <div><b>ობიექტის დასახელება:</b> ${esc(t.objectName)}</div>
+                <div><b>დედლაინი:</b> ${esc(t.deadline)}</div>
+                <div><b>სართული:</b> ${esc(t.floor) || 'მითითებული არ არის'}</div>
+                <div><b>სტატუსი:</b> ${esc(effStatus)}</div>
+                <div><b>პასუხისმგებელი პირი:</b> ${esc(t.assignee) || '-'}</div>
+                <div><b>ხარისხის მენეჯერი:</b> ${esc(oldVal(t, 'qualityManager')) || '-'}</div>
+                <div><b>ხარვეზის ტიპი:</b> ${esc(oldVal(t, 'defectType')) || '-'}</div>
+                <div><b>თიქეთი გახსნა:</b> ${esc(t.createdBy) || '-'}</div>
+                ${t.closed ? `<div><b>დახურვის თარიღი:</b> ${esc(t.closedDate) || '-'}</div><div><b>დახურა:</b> ${esc(t.closedBy) || '-'}</div>` : ''}
             `;
             document.getElementById('pdfDesc').innerText = t.problemDesc || '-';
             document.getElementById('pdfRec').innerText = t.recommendation || '-';
 
-            // ყველა ფოტოს ჩატვირთვას ველოდებით PDF-ის გენერაციამდე
-            let photoDiv = document.getElementById('pdfPhoto');
-            photoDiv.innerHTML = '';
-            if (photoList.length) {
-                photoDiv.style.gridTemplateColumns = photoList.length === 1 ? '1fr' : '1fr 1fr';
-                let imgs = await Promise.all(photoList.map(src => new Promise(resolve => {
-                    let img = new Image();
-                    img.onload = () => resolve(img);
-                    img.onerror = () => resolve(img);
-                    img.src = src;
-                })));
-                imgs.forEach(img => {
-                    img.style.maxHeight = photoList.length === 1 ? '400px' : '260px';
-                    let wrap = document.createElement('div');
-                    wrap.className = 'ph';
-                    wrap.appendChild(img);
-                    photoDiv.appendChild(wrap);
-                });
+            await fillPhotoGrid(document.getElementById('pdfPhoto'), photoData.defect, 'ფოტო არ არის მიმაგრებული');
+
+            let fixBox = document.getElementById('pdfFix');
+            if (t.closed || photoData.fix.length) {
+                fixBox.style.display = 'block';
+                document.getElementById('pdfFixComment').innerText = t.closeComment || '-';
+                await fillPhotoGrid(document.getElementById('pdfFixPhoto'), photoData.fix, 'გამოსწორების ფოტო არ არის მიმაგრებული');
             } else {
-                photoDiv.style.gridTemplateColumns = '1fr';
-                photoDiv.innerHTML = '<i>ფოტო არ არის მიმაგრებული</i>';
+                fixBox.style.display = 'none';
             }
 
             element.style.display = 'block';
             window.scrollTo(0, 0);
 
+            let safeName = String(t.objectName || '').replace(/[\\/:*?"<>|]/g, '-');
             let opt = {
                 margin:       10,
-                filename:     `Ticket_${t.id}_${String(t.objectName).replace(/[\\/:*?"<>|]/g, '-')}.pdf`,
+                filename:     `Ticket_${t.id}_${safeName}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -603,88 +1068,93 @@
     // ===== სტატუსი და ცხრილი =====
     function getEffectivePriority(t) {
         if (t.closed) return 'დახურული';
-        let today = new Date().toISOString().split('T')[0];
-        if (t.deadline && t.deadline < today) {
-            return 'ვადაგადაცილებული';
-        }
+        let d = daysLeft(t.deadline);
+        if (d !== null && d < 0) return 'ვადაგადაცილებული';
+        if (d !== null && d <= SOON_DAYS) return 'მალე იწურება';
         return 'ვადაში';
     }
 
     function getBadgeHTML(status) {
         if (status === 'დახურული') return '<span class="badge badge-closed">დახურული</span>';
         if (status === 'ვადაში') return '<span class="badge badge-low">ვადაში</span>';
+        if (status === 'მალე იწურება') return '<span class="badge badge-soon">მალე იწურება</span>';
         if (status === 'ვადაგადაცილებული') return '<span class="badge badge-overdue">ვადაგადაცილებული</span>';
-        return status;
+        return esc(status);
+    }
+
+    function deadlineNote(t) {
+        if (t.closed) return '';
+        let d = daysLeft(t.deadline);
+        if (d === null) return '';
+        if (d < 0) return `<span class="dl-note dl-red">გადაცილებულია ${-d} დღით</span>`;
+        if (d === 0) return '<span class="dl-note dl-amber">ვადა დღეს იწურება</span>';
+        if (d <= SOON_DAYS) return `<span class="dl-note dl-amber">დარჩა ${d} დღე</span>`;
+        return '';
     }
 
     function actionButtons(t, i) {
+        let hist = `<button class="action-btn btn-hist" onclick="showHistory(${i})">🕘 ისტორია</button>`;
         let pdf = `<button class="action-btn btn-print" onclick="downloadPdfIndex(${i})">📥 PDF</button>`;
-        if (!isEditor) return pdf;
+        if (!isEditor) return hist + pdf;
         let closeBtn = t.closed
             ? `<button class="action-btn btn-reopen" onclick="toggleClose(${i})">↩ გახსნა</button>`
             : `<button class="action-btn btn-close" onclick="toggleClose(${i})">✔ დახურვა</button>`;
-        return closeBtn +
+        return `<button class="action-btn btn-edit" onclick="startEdit(${i})">✏️ შესწორება</button>` +
+            closeBtn +
             `<button class="action-btn btn-wa" onclick="sendWhatsApp(${i})">📲 WA</button>` +
-            pdf +
+            hist + pdf +
             `<button class="action-btn btn-delete" onclick="deleteTicket(${i})">🗑️</button>`;
     }
 
     function renderTable() {
         let search = document.getElementById('searchInput').value.toLowerCase();
-        let filter = document.getElementById('statusFilter').value;
+        let fStatus = document.getElementById('statusFilter').value;
+        let fObject = document.getElementById('objectFilter').value;
+        let fAssignee = document.getElementById('assigneeFilter').value;
+        let from = document.getElementById('dateFrom').value;
+        let to = document.getElementById('dateTo').value;
         let tickets = getTickets();
         let tbody = document.getElementById('ticketTable');
         tbody.innerHTML = '';
 
         if (dbError) {
-            tbody.innerHTML = `<tr><td colspan="6" style="color:#b91c1c;">⚠️ ბაზასთან დაკავშირება ვერ მოხერხდა: ${dbError}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="color:#b91c1c;">⚠️ ბაზასთან დაკავშირება ვერ მოხერხდა: ${esc(dbError)}</td></tr>`;
             return;
         }
         if (!dbLoaded) {
             tbody.innerHTML = '<tr><td colspan="6">⏳ იტვირთება...</td></tr>';
             return;
         }
-        if (tickets.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6">თიქეთები ჯერ არ არის.</td></tr>';
-        }
         updateMigrateBox();
 
+        let shown = 0;
         tickets.forEach((t, i) => {
             let effStatus = getEffectivePriority(t);
-            let matchesSearch = t.id.toLowerCase().includes(search) || t.objectName.toLowerCase().includes(search) || (t.assignee && t.assignee.toLowerCase().includes(search));
-            let matchesFilter = (filter === 'ALL') || (effStatus === filter);
-            let pc = t.photoCount || (t.photo ? 1 : 0);
+            let hay = [t.id, t.objectName, t.assignee, oldVal(t, 'defectType')].join(' ').toLowerCase();
+            let okSearch = !search || hay.includes(search);
+            let okStatus = fStatus === 'ALL' || (fStatus === 'OPEN' ? !t.closed : effStatus === fStatus);
+            let okObject = fObject === 'ALL' || t.objectName === fObject;
+            let okAssignee = fAssignee === 'ALL' || (t.assignee || '').trim() === fAssignee;
+            let okFrom = !from || (t.deadline && t.deadline >= from);
+            let okTo = !to || (t.deadline && t.deadline <= to);
+            let pc = (t.photoCount || (t.photo ? 1 : 0));
 
-            if (matchesSearch && matchesFilter) {
+            if (okSearch && okStatus && okObject && okAssignee && okFrom && okTo) {
+                shown++;
                 tbody.innerHTML += `
                     <tr>
-                        <td data-label="ID"><span><b>#${t.id}</b>${pc ? `<br><small style="color:#64748b;">📷 ${pc}</small>` : ''}</span></td>
-                        <td data-label="ობიექტი / სართული"><span>${t.objectName}<br><small style="color:#64748b;">სართული: ${t.floor||'-'}</small></span></td>
-                        <td data-label="პასუხისმგებელი">${t.assignee||'-'}</td>
-                        <td data-label="დედლაინი">${t.deadline}</td>
+                        <td data-label="ID"><span><b>#${esc(t.id)}</b>${pc ? `<br><small style="color:#64748b;">📷 ${pc}</small>` : ''}</span></td>
+                        <td data-label="ობიექტი / სართული"><span>${esc(t.objectName)}<br><small style="color:#64748b;">სართული: ${esc(t.floor) || '-'}</small></span></td>
+                        <td data-label="პასუხისმგებელი">${esc(t.assignee) || '-'}</td>
+                        <td data-label="დედლაინი"><span>${esc(t.deadline)}${deadlineNote(t)}</span></td>
                         <td data-label="სტატუსი">${getBadgeHTML(effStatus)}</td>
                         <td data-label="მოქმედება">${actionButtons(t, i)}</td>
                     </tr>
                 `;
             }
         });
-    }
-
-    async function toggleClose(i) {
-        if (!isEditor) return;
-        let t = getTickets()[i];
-        if (!t) return;
-        let update;
-        if (t.closed) {
-            update = { closed: false, closedBy: '', closedDate: '' };
-        } else {
-            if (!confirm(`დავხუროთ თიქეთი #${t.id}?`)) return;
-            update = { closed: true, closedBy: currentUser, closedDate: new Date().toISOString().split('T')[0] };
-        }
-        try {
-            await db.collection('tickets').doc(docIdOf(t.id)).update(update);
-        } catch (err) {
-            alert('⚠️ სტატუსის შეცვლა ვერ მოხერხდა: ' + (err.message || err));
+        if (!shown) {
+            tbody.innerHTML = `<tr><td colspan="6">${tickets.length ? 'ფილტრით თიქეთი ვერ მოიძებნა.' : 'თიქეთები ჯერ არ არის.'}</td></tr>`;
         }
     }
 
@@ -695,9 +1165,9 @@
                    `🏢 *ობიექტი:* ${t.objectName} (სართული: ${t.floor || '-'})\n` +
                    `📅 *დედლაინი:* ${t.deadline}\n` +
                    `⚠️ *სტატუსი:* ${getEffectivePriority(t)}\n` +
-                   `🔧 *ხარვეზის ტიპი:* ${t.defectType || t.groups || '-'}\n` +
+                   `🔧 *ხარვეზის ტიპი:* ${oldVal(t, 'defectType') || '-'}\n` +
                    `👤 *პასუხისმგებელი:* ${t.assignee || '-'}\n` +
-                   `✅ *ხარისხის მენეჯერი:* ${t.qualityManager || t.supervisor || '-'}\n\n` +
+                   `✅ *ხარისხის მენეჯერი:* ${oldVal(t, 'qualityManager') || '-'}\n\n` +
                    `📝 *პრობლემა:* ${t.problemDesc}\n\n` +
                    `💡 *რეკომენდაცია:* ${t.recommendation || '-'}`;
 
@@ -720,12 +1190,14 @@
                 ps.docs.forEach(d => batch.delete(d.ref));
                 batch.delete(db.collection('tickets').doc(docIdOf(t.id)));
                 await batch.commit();
+                if (editingId === t.id) cancelEdit();
             } catch (err) {
                 alert('⚠️ წაშლა ვერ მოხერხდა: ' + (err.message || err));
             }
         }
     }
 
+    initObjectOptions();
     applyAuth();
     startListener();
 </script>
