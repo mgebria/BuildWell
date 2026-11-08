@@ -76,7 +76,6 @@
 
         .action-btn { padding: 5px 8px; border-radius: 4px; border: none; font-size: 11px; cursor: pointer; margin-right: 2px; margin-bottom: 2px; }
         .btn-print { background: #0284c7; color: white; }
-        .btn-wa { background: #25D366; color: white; }
         .btn-delete { background: #dc2626; color: white; }
         .btn-close { background: #16a34a; color: white; }
         .btn-reopen { background: #64748b; color: white; }
@@ -112,6 +111,19 @@
         .hist small { color: #64748b; }
         .hist-line { font-size: 12px; color: #334155; margin-top: 2px; word-break: break-word; }
 
+        /* თიქეთის დეტალები და ფოტოს გადიდება */
+        #ticketTable tr:hover { background: #f8fafc; }
+        .modal-box.wide { width: 720px; }
+        .d-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; font-size: 13px; background: #f8fafc; padding: 12px; border-radius: 6px; margin-bottom: 10px; }
+        .d-title { font-size: 12px; font-weight: 700; color: #334155; margin: 12px 0 4px; }
+        .d-box { background: #f1f5f9; border-left: 4px solid #2563eb; padding: 10px; font-size: 13px; border-radius: 2px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+        .d-green { border-left-color: #16a34a; }
+        .d-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+        .d-photo-grid img { width: 100%; height: 110px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; cursor: zoom-in; }
+        .d-actions { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+        #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; z-index: 950; cursor: zoom-out; }
+        #lightbox img { max-width: 96vw; max-height: 94vh; border-radius: 4px; }
+
         /* PDF გენერირების დიზაინი */
         #pdfTemplate {
             display: none;
@@ -141,6 +153,7 @@
             .header-right { width: 100%; justify-content: space-between; flex-wrap: wrap; }
             .card { padding: 14px; }
             .stats { grid-template-columns: 1fr 1fr; }
+            .d-grid { grid-template-columns: 1fr; }
             /* iOS-ზე ზუმის თავიდან ასაცილებლად */
             .form-group input, .form-group select, .form-group textarea,
             .filter-grid input, .filter-grid select, .login-box input { font-size: 16px; padding: 10px; }
@@ -297,6 +310,9 @@
     </div>
 </div>
 
+<!-- ფოტოს გადიდება -->
+<div id="lightbox" onclick="this.style.display='none'"><img id="lightboxImg" alt=""></div>
+
 <!-- ფარული შაბლონი PDF-ის დასაგენერირებლად -->
 <div id="pdfTemplate">
     <div class="pdf-header">მიმდინარე სამშენებლო-სამონტაჟო სამუშაოების შეფასება</div>
@@ -367,6 +383,17 @@
     };
     let currentUser = sessionStorage.getItem('archi_user'); // login, 'guest' ან null
     let isEditor = false;
+
+    // რედაქტირება, დახურვა და წაშლა შეუძლია მხოლოდ იმას, ვინც თიქეთი გახსნა
+    // (თუ თიქეთს ავტორი არ აქვს მითითებული, ნებისმიერ ადმინს შეუძლია)
+    function canModify(t) {
+        return isEditor && !!t && (!t.createdBy || t.createdBy === currentUser);
+    }
+    function denyNotOwner(t) {
+        if (canModify(t)) return false;
+        alert('⚠️ თიქეთის შეცვლა შეუძლია მხოლოდ მას, ვინც ის გახსნა' + (t && t.createdBy ? ` (${t.createdBy}).` : '.'));
+        return true;
+    }
 
     function doLogin() {
         let login = document.getElementById('loginInput').value.trim().toLowerCase();
@@ -689,6 +716,7 @@
         if (!isEditor) return;
         let t = getTickets()[i];
         if (!t) return;
+        if (denyNotOwner(t)) return;
         editingId = t.id;
         removeTempOption();
         let sel = document.getElementById('objectName');
@@ -794,6 +822,7 @@
     async function saveEdit() {
         let t = findTicket(editingId);
         if (!t) { alert('⚠️ თიქეთი ვერ მოიძებნა.'); cancelEdit(); return; }
+        if (denyNotOwner(t)) { cancelEdit(); return; }
 
         let vals = readFormValues();
         let changes = [];
@@ -833,8 +862,9 @@
     }
 
     // ===== მოდალური ფანჯარა =====
-    function openModal(html) {
+    function openModal(html, wide) {
         document.getElementById('modalBody').innerHTML = html;
+        document.querySelector('#modal .modal-box').classList.toggle('wide', !!wide);
         document.getElementById('modal').style.display = 'flex';
     }
 
@@ -842,6 +872,60 @@
         document.getElementById('modal').style.display = 'none';
         document.getElementById('modalBody').innerHTML = '';
         fixTargetId = null;
+        detailsToken++;
+    }
+
+    function viewPhoto(src) {
+        document.getElementById('lightboxImg').src = src;
+        document.getElementById('lightbox').style.display = 'flex';
+    }
+
+    // ===== თიქეთის დეტალები (დაწკაპუნებით, PDF-ის გარეშე) =====
+    let detailsToken = 0;
+
+    function photosBlock(title, list, emptyText) {
+        return `<div class="d-title">${title}</div>` + (list.length
+            ? `<div class="d-photo-grid">${list.map(src => `<img src="${src}" onclick="viewPhoto(this.src)">`).join('')}</div>`
+            : `<i style="font-size:12px;color:#64748b;">${emptyText}</i>`);
+    }
+
+    async function showDetails(i) {
+        let t = getTickets()[i];
+        if (!t) return;
+        let token = ++detailsToken;
+        let row = (label, v) => `<div><b>${label}:</b> ${esc(v) || '-'}</div>`;
+        let html =
+            `<h3>🔎 თიქეთი #${esc(t.id)} ${getBadgeHTML(getEffectivePriority(t))}</h3>` +
+            `<div class="d-grid">` +
+                row('ობიექტი', t.objectName) + row('სართული', t.floor) +
+                row('დედლაინი', t.deadline) + row('გახსნის თარიღი', t.date) +
+                row('პასუხისმგებელი', t.assignee) + row('ხარისხის მენეჯერი', oldVal(t, 'qualityManager')) +
+                row('ხარვეზის ტიპი', oldVal(t, 'defectType')) + row('თიქეთი გახსნა', t.createdBy) +
+                (t.closed ? row('დახურვის თარიღი', t.closedDate) + row('დახურა', t.closedBy) : '') +
+            `</div>` +
+            `<div class="d-title">პრობლემის აღწერილობა</div><div class="d-box">${esc(t.problemDesc) || '-'}</div>` +
+            `<div class="d-title">რეკომენდაცია</div><div class="d-box d-green">${esc(t.recommendation) || '-'}</div>` +
+            `<div id="detailsPhotos"><div class="d-title">⏳ ფოტოები იტვირთება...</div></div>` +
+            `<div class="d-actions">` +
+                `<button class="action-btn btn-hist" onclick="showHistory(${i})">🕘 ისტორია</button>` +
+                `<button class="action-btn btn-print" onclick="downloadPdfIndex(${i})">📥 PDF გადმოწერა</button>` +
+            `</div>`;
+        openModal(html, true);
+
+        try {
+            let ph = await fetchPhotos(t);
+            let box = document.getElementById('detailsPhotos');
+            if (token !== detailsToken || !box) return;
+            let out = photosBlock('ფოტო მასალა', ph.defect, 'ფოტო არ არის მიმაგრებული');
+            if (t.closed || ph.fix.length) {
+                out += `<div class="d-title">გამოსწორების კომენტარი</div><div class="d-box d-green">${esc(t.closeComment) || '-'}</div>` +
+                       photosBlock('გამოსწორების შემდგომი ფოტო მასალა', ph.fix, 'გამოსწორების ფოტო არ არის მიმაგრებული');
+            }
+            box.innerHTML = out;
+        } catch (err) {
+            let box = document.getElementById('detailsPhotos');
+            if (box) box.innerHTML = '<div class="d-title" style="color:#b91c1c;">⚠️ ფოტოების ჩატვირთვა ვერ მოხერხდა</div>';
+        }
     }
 
     // ===== ისტორია =====
@@ -884,6 +968,7 @@
         if (!isEditor) return;
         let t = getTickets()[i];
         if (!t) return;
+        if (denyNotOwner(t)) return;
         if (t.closed) {
             if (confirm(`თიქეთი #${t.id} ხელახლა გავხსნათ?`)) reopenTicket(t);
             return;
@@ -905,6 +990,7 @@
         if (!isEditor || !fixTargetId) return;
         let t = findTicket(fixTargetId);
         if (!t) { closeModal(); return; }
+        if (denyNotOwner(t)) { closeModal(); return; }
         let comment = document.getElementById('fixComment').value.trim();
         let list = photoSets.fix.slice();
         let btn = document.getElementById('fixSaveBtn');
@@ -1095,13 +1181,12 @@
     function actionButtons(t, i) {
         let hist = `<button class="action-btn btn-hist" onclick="showHistory(${i})">🕘 ისტორია</button>`;
         let pdf = `<button class="action-btn btn-print" onclick="downloadPdfIndex(${i})">📥 PDF</button>`;
-        if (!isEditor) return hist + pdf;
+        if (!canModify(t)) return hist + pdf;
         let closeBtn = t.closed
             ? `<button class="action-btn btn-reopen" onclick="toggleClose(${i})">↩ გახსნა</button>`
             : `<button class="action-btn btn-close" onclick="toggleClose(${i})">✔ დახურვა</button>`;
         return `<button class="action-btn btn-edit" onclick="startEdit(${i})">✏️ შესწორება</button>` +
             closeBtn +
-            `<button class="action-btn btn-wa" onclick="sendWhatsApp(${i})">📲 WA</button>` +
             hist + pdf +
             `<button class="action-btn btn-delete" onclick="deleteTicket(${i})">🗑️</button>`;
     }
@@ -1142,13 +1227,13 @@
             if (okSearch && okStatus && okObject && okAssignee && okFrom && okTo) {
                 shown++;
                 tbody.innerHTML += `
-                    <tr>
+                    <tr onclick="showDetails(${i})" style="cursor:pointer;">
                         <td data-label="ID"><span><b>#${esc(t.id)}</b>${pc ? `<br><small style="color:#64748b;">📷 ${pc}</small>` : ''}</span></td>
                         <td data-label="ობიექტი / სართული"><span>${esc(t.objectName)}<br><small style="color:#64748b;">სართული: ${esc(t.floor) || '-'}</small></span></td>
                         <td data-label="პასუხისმგებელი">${esc(t.assignee) || '-'}</td>
                         <td data-label="დედლაინი"><span>${esc(t.deadline)}${deadlineNote(t)}</span></td>
                         <td data-label="სტატუსი">${getBadgeHTML(effStatus)}</td>
-                        <td data-label="მოქმედება">${actionButtons(t, i)}</td>
+                        <td data-label="მოქმედება" onclick="event.stopPropagation()">${actionButtons(t, i)}</td>
                     </tr>
                 `;
             }
@@ -1156,22 +1241,6 @@
         if (!shown) {
             tbody.innerHTML = `<tr><td colspan="6">${tickets.length ? 'ფილტრით თიქეთი ვერ მოიძებნა.' : 'თიქეთები ჯერ არ არის.'}</td></tr>`;
         }
-    }
-
-    function sendWhatsApp(i) {
-        if (!isEditor) return;
-        let t = getTickets()[i];
-        let text = `🚨 *ტექნიკური ინსპექტირების თიქეთი #${t.id}*\n\n` +
-                   `🏢 *ობიექტი:* ${t.objectName} (სართული: ${t.floor || '-'})\n` +
-                   `📅 *დედლაინი:* ${t.deadline}\n` +
-                   `⚠️ *სტატუსი:* ${getEffectivePriority(t)}\n` +
-                   `🔧 *ხარვეზის ტიპი:* ${oldVal(t, 'defectType') || '-'}\n` +
-                   `👤 *პასუხისმგებელი:* ${t.assignee || '-'}\n` +
-                   `✅ *ხარისხის მენეჯერი:* ${oldVal(t, 'qualityManager') || '-'}\n\n` +
-                   `📝 *პრობლემა:* ${t.problemDesc}\n\n` +
-                   `💡 *რეკომენდაცია:* ${t.recommendation || '-'}`;
-
-        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     }
 
     function downloadPdfIndex(i) {
@@ -1183,6 +1252,7 @@
         if (!isEditor) return;
         let t = getTickets()[i];
         if (!t) return;
+        if (denyNotOwner(t)) return;
         if (confirm('ნამდვილად გსურთ ამ თიქეთის წაშლა?')) {
             try {
                 let ps = await db.collection('photos').where('ticketId', '==', t.id).get();
